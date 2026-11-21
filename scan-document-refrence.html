@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SignClear X-Ray — RFS 30 Cheat Sheet &amp; Mocks</title>
+<style>
+/* ============================================================
+   0. DESIGN TOKENS
+   ============================================================ */
+:root{
+  --bg:#0A0C10;--bg2:#0D1016;--panel:#12161E;--panel2:#171C26;
+  --line:#232A36;--line2:#2F3847;
+  --txt:#E6EAF2;--txt2:#9AA5B8;--txt3:#6B7688;
+  --accent:#5B8CFF;--accent2:#8B6CFF;
+  --red:#FF5A5F;--amber:#FFB020;--green:#2ED47A;
+  --red-bg:rgba(255,90,95,.12);--amber-bg:rgba(255,176,32,.12);--green-bg:rgba(46,212,122,.12);
+  --accent-bg:rgba(91,140,255,.12);
+  --header-bg:rgba(10,12,16,.82);
+  --shadow:0 20px 50px rgba(0,0,0,.45);
+  --r:12px;--r-lg:16px;--r-xl:22px;
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+[data-theme="light"]{
+  --bg:#F5F7FB;--bg2:#FFFFFF;--panel:#FFFFFF;--panel2:#F1F4F9;
+  --line:#E1E6EF;--line2:#CFD7E4;
+  --txt:#0E1320;--txt2:#4B566B;--txt3:#7C879B;
+  --accent:#2F63E8;--accent2:#6C4BF0;
+  --red:#D92D33;--amber:#B87500;--green:#0F8A4C;
+  --red-bg:rgba(217,45,51,.09);--amber-bg:rgba(184,117,0,.10);--green-bg:rgba(15,138,76,.09);
+  --accent-bg:rgba(47,99,232,.09);
+  --header-bg:rgba(245,247,251,.85);
+  --shadow:0 16px 40px rgba(16,24,40,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;line-height:1.25;letter-spacing:-.015em}
+p{margin:0 0 10px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.88em}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.mono{font-family:var(--mono)}
+.dim{color:var(--txt3)}
+
+/* HEADER */
+header.top{position:sticky;top:0;z-index:80;background:var(--header-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top-inner{display:flex;align-items:center;gap:14px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.logo{width:34px;height:34px;border-radius:10px;flex:0 0 auto;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;letter-spacing:.5px}
+.brand b{display:block;font-size:14px;line-height:1.2}
+.brand span{display:block;font-size:11px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tab{border:0;background:transparent;color:var(--txt2);font:inherit;font-size:13px;font-weight:600;padding:7px 16px;border-radius:999px;cursor:pointer;transition:.18s;white-space:nowrap}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(91,140,255,.35)}
+.icon-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--txt2);cursor:pointer;font-size:15px;display:grid;place-items:center;transition:.18s;flex:0 0 auto}
+.icon-btn:hover{color:var(--txt);border-color:var(--line2)}
+
+/* LAYOUT */
+main{padding:26px 0 80px}
+.section-head{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin:0 0 16px}
+.section-head h2{font-size:22px}
+.section-head p{margin:0;font-size:13px;color:var(--txt2);max-width:680px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;transition:border-color .2s}
+.card:hover{border-color:var(--line2)}
+.card h4{font-size:14px;margin-bottom:6px}
+.card p{font-size:13px;color:var(--txt2);margin:0}
+.card .kicker{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px;display:block}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.pill.red{background:var(--red-bg);color:var(--red);border-color:color-mix(in srgb,var(--red) 30%,transparent)}
+.pill.amber{background:var(--amber-bg);color:var(--amber);border-color:color-mix(in srgb,var(--amber) 30%,transparent)}
+.pill.green{background:var(--green-bg);color:var(--green);border-color:color-mix(in srgb,var(--green) 30%,transparent)}
+.pill.blue{background:var(--accent-bg);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.pill.ghost{background:var(--panel2);color:var(--txt2);border-color:var(--line)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:0 0 auto}
+
+/* CHEAT SHEET */
+.cs-layout{display:grid;grid-template-columns:212px 1fr;gap:28px;align-items:start}
+.rail{position:sticky;top:82px;display:flex;flex-direction:column;gap:2px}
+.rail a{font-size:12.5px;color:var(--txt3);padding:7px 11px;border-radius:8px;border-left:2px solid transparent;transition:.15s;font-weight:500}
+.rail a:hover{color:var(--txt);background:var(--panel);text-decoration:none}
+.rail a.on{color:var(--accent);border-left-color:var(--accent);background:var(--accent-bg);font-weight:600}
+.cs-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.search{flex:1 1 240px;min-width:180px;position:relative}
+.search input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--txt);padding:9px 12px 9px 34px;border-radius:10px;font:inherit;font-size:13px;outline:none;transition:.18s}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+.search::before{content:"⌕";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--txt3);font-size:15px}
+.btn{background:var(--panel);border:1px solid var(--line);color:var(--txt2);padding:8px 13px;border-radius:9px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s;white-space:nowrap}
+.btn:hover{color:var(--txt);border-color:var(--line2);background:var(--panel2)}
+details.acc{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden;scroll-margin-top:86px;transition:border-color .2s}
+details.acc:hover{border-color:var(--line2)}
+details.acc>summary{cursor:pointer;list-style:none;padding:15px 18px;display:flex;align-items:center;gap:12px;font-weight:600;font-size:14.5px;user-select:none}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::after{content:"+";margin-left:auto;color:var(--txt3);font-size:18px;font-weight:400;transition:transform .2s;line-height:1}
+details.acc[open]>summary::after{content:"–"}
+details.acc[open]>summary{border-bottom:1px solid var(--line)}
+.acc-num{font-family:var(--mono);font-size:10.5px;color:var(--txt3);background:var(--panel2);border:1px solid var(--line);padding:2px 7px;border-radius:6px;flex:0 0 auto}
+.acc-body{padding:18px;font-size:13.5px;color:var(--txt2)}
+.acc-body h5{margin:0 0 8px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);font-weight:700}
+.acc-body strong{color:var(--txt)}
+.acc-body ul{margin:0 0 12px;padding-left:18px}
+.acc-body li{margin-bottom:6px}
+.acc-body>*:last-child{margin-bottom:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:560px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--panel2);color:var(--txt3);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td strong{color:var(--txt)}
+.code-wrap{position:relative;margin-bottom:14px}
+.code-wrap .copy{position:absolute;top:8px;right:8px;background:var(--panel2);border:1px solid var(--line);color:var(--txt3);font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:6px;cursor:pointer;font-family:var(--font);transition:.18s;z-index:2}
+.code-wrap .copy:hover{color:var(--txt);border-color:var(--line2)}
+.code{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--txt2);white-space:pre;margin:0}
+.code .k{color:var(--accent2)}
+.code .s{color:var(--green)}
+.code .c{color:var(--txt3);font-style:italic}
+
+/* HERO & COMPONENTS */
+.hero{background:radial-gradient(120% 140% at 0% 0%,var(--accent-bg) 0%,transparent 55%),radial-gradient(120% 140% at 100% 0%,color-mix(in srgb,var(--accent2) 14%,transparent) 0%,transparent 55%),var(--panel);border:1px solid var(--line);border-radius:var(--r-xl);padding:26px;margin-bottom:16px}
+.hero h1{font-size:clamp(22px,3.4vw,32px);margin-bottom:8px}
+.hero .lede{font-size:14.5px;color:var(--txt2);max-width:760px;margin-bottom:18px}
+.hero .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px}
+.stat b{display:block;font-size:19px;letter-spacing:-.02em}
+.stat span{font-size:10.5px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.chip{font-family:var(--mono);font-size:10.5px;padding:2.5px 7px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);color:var(--txt3)}
+.chip.cut{text-decoration:line-through;opacity:.75}
+.sw{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);font-size:12px}
+.sw i{width:24px;height:24px;border-radius:6px;flex:0 0 auto;border:1px solid rgba(255,255,255,.12)}
+.sw code{font-size:10.5px;color:var(--txt3);margin-left:auto}
+.bar{height:7px;border-radius:4px;background:var(--panel2);overflow:hidden;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.bar.red>i{background:var(--red)}.bar.amber>i{background:var(--amber)}.bar.green>i{background:var(--green)}
+.barrow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;font-size:12px;margin-bottom:9px}
+.barrow span{color:var(--txt2)}
+.barrow b{font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.barrow .bar{grid-column:1/-1}
+.timeline{position:relative;padding-left:22px;margin-bottom:16px}
+.timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-item::before{content:"";position:absolute;left:-20px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--panel);box-shadow:0 0 0 2px var(--accent-bg)}
+.tl-item.hot::before{background:var(--red);box-shadow:0 0 0 2px var(--red-bg)}
+.tl-t{font-family:var(--mono);font-size:10.5px;color:var(--accent);font-weight:700;letter-spacing:.05em}
+.tl-item.hot .tl-t{color:var(--red)}
+.tl-h{font-size:13.5px;font-weight:600;color:var(--txt);margin:1px 0 3px}
+.tl-d{font-size:12.5px;color:var(--txt2)}
+.callout{border-left:3px solid var(--accent);background:var(--accent-bg);padding:11px 14px;border-radius:0 10px 10px 0;font-size:13px;color:var(--txt2);margin-bottom:14px}
+.callout.warn{border-color:var(--amber);background:var(--amber-bg)}
+.callout.danger{border-color:var(--red);background:var(--red-bg)}
+.callout b{color:var(--txt)}
+.no-res{display:none;padding:22px;text-align:center;color:var(--txt3);font-size:13px;border:1px dashed var(--line);border-radius:var(--r-lg)}
+
+/* MOCKS — shared */
+.mock-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-xl);padding:18px;margin-bottom:18px;scroll-margin-top:86px}
+.mock-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.mock-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-bg);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);padding:4px 8px;border-radius:7px;flex:0 0 auto;margin-top:2px}
+.mock-head h3{font-size:15.5px}
+.mock-head p{margin:2px 0 0;font-size:12.5px;color:var(--txt2)}
+.browser{min-width:520px;border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:var(--bg2);box-shadow:var(--shadow)}
+.browser-bar{display:flex;align-items:center;gap:6px;padding:8px 11px;background:var(--panel2);border-bottom:1px solid var(--line)}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.url{flex:1;margin-left:8px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:9.5px;color:var(--txt3);padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app{display:grid;grid-template-columns:58% 42%;grid-template-rows:auto 1fr;grid-template-areas:"top top" "canvas deck";font-size:11px}
+.app-top{grid-area:top;display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.doc-pill{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;font-size:10.5px;font-weight:600;color:var(--txt)}
+.doc-pill .ic{font-size:10px;color:var(--red)}
+.spacer{flex:1}
+.mini-pill{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--green-bg);color:var(--green);border:1px solid color-mix(in srgb,var(--green) 30%,transparent);white-space:nowrap}
+.lang-chips{display:flex;gap:3px}
+.lang-chips i{font-style:normal;font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--txt3);cursor:pointer;transition:.15s}
+.lang-chips i:hover{color:var(--txt2)}
+.lang-chips i.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.canvas{padding:14px;background:var(--bg);border-right:1px solid var(--line);min-height:340px;max-height:440px;overflow-y:auto}
+.pg{background:#fff;color:#0B0F18;border-radius:8px;padding:14px 15px;box-shadow:0 6px 18px rgba(0,0,0,.28);position:relative;overflow:hidden}
+.pg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #E6E9EF}
+.pg-head b{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:#3C465A}
+.pg-head span{font-family:var(--mono);font-size:8.5px;color:#8A94A6}
+.ln{height:5px;border-radius:3px;background:#E4E8EF;margin:6px 0}
+.hl{border-radius:5px;padding:5px 7px;margin:7px 0;font-size:9px;line-height:1.45;border-left:3px solid;position:relative;cursor:pointer}
+.hl.red{background:#FFE9EA;border-color:#E03134;color:#7A1416}
+.hl.amber{background:#FFF6E2;border-color:#C98A00;color:#6B4A00}
+.hl.green{background:#E8F8EF;border-color:#12894B;color:#0B5530}
+.hl-tag{position:absolute;top:-6px;right:-4px;font-family:var(--mono);font-size:7px;font-weight:700;color:#fff;padding:1px 4px;border-radius:4px;letter-spacing:.04em}
+.hl.red .hl-tag{background:#E03134}.hl.amber .hl-tag{background:#C98A00}.hl.green .hl-tag{background:#12894B}
+.hl.off{opacity:.18;filter:grayscale(1)}
+.hl.on{animation:pop .5s cubic-bezier(.22,1,.36,1) both}
+.hl.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,49,52,.55)}50%{box-shadow:0 0 0 6px rgba(224,49,52,0)}}
+.scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan 1.8s ease-in-out infinite}
+@keyframes scan{0%{top:0;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:100%;opacity:0}}
+.mask-token{display:inline-block;background:#EEF1F7;border:1px dashed #A9B3C4;color:#5A6577;font-family:var(--mono);font-size:8px;padding:0 4px;border-radius:3px;margin:0 1px}
+.clause-block{margin-bottom:1px}
+.cl-num{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5A6577;margin:7px 0 3px}
+.pdf-p{font-size:9px;line-height:1.5;color:#3C465A;margin:0 0 5px}
+.pdf-p.bold{font-weight:700;color:#1F2A3D}
+.deck{padding:13px;background:var(--panel);min-height:340px;display:flex;flex-direction:column;gap:11px}
+.dcard{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}
+.dcard h6{margin:0 0 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-weight:700}
+.score-row{display:flex;align-items:center;gap:12px}
+.dial{position:relative;width:70px;height:70px;border-radius:50%;flex:0 0 auto;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center}
+.dial::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel2)}
+.dial b{position:relative;font-size:19px;letter-spacing:-.03em}
+.score-meta b{display:block;font-size:11.5px;color:var(--txt)}
+.score-meta span{font-size:10px;color:var(--txt3)}
+.mini-bars{display:grid;gap:5px}
+.mb{display:grid;grid-template-columns:1fr auto;gap:4px;font-size:9.5px;color:var(--txt2);align-items:center}
+.mb i{display:block;height:4px;border-radius:2px;grid-column:1/-1;background:var(--line);overflow:hidden}
+.mb i>u{display:block;height:100%;text-decoration:none;border-radius:2px}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap}
+.mbtn{flex:1;min-width:0;text-align:center;font-size:10px;font-weight:700;padding:7px 8px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.mbtn.ghost{background:transparent}
+.mbtn[data-play],.mbtn[data-copy],.mbtn[data-copy-wa],.play[data-play]{cursor:pointer}
+.clause{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px;display:grid;gap:5px;font-size:10px;cursor:pointer;transition:border-color .15s,transform .12s}
+.clause:hover{border-color:var(--accent)}
+.clause:active{transform:scale(.985)}
+.clause.red{border-left:3px solid var(--red)}.clause.amber{border-left:3px solid var(--amber)}.clause.green{border-left:3px solid var(--green)}
+.clause .ct{display:flex;align-items:center;gap:5px;font-weight:700;font-size:10px;color:var(--txt)}
+.clause p{margin:0;font-size:9.5px;color:var(--txt2);line-height:1.45}
+.clause .bm{font-size:9px;color:var(--txt3);border-top:1px dashed var(--line);padding-top:5px}
+.wave{display:flex;align-items:center;gap:2px;height:22px}
+.wave i{display:block;width:2.5px;border-radius:2px;background:var(--accent);animation:w .9s ease-in-out infinite}
+@keyframes w{0%,100%{height:20%}50%{height:100%}}
+.wave.paused i{animation-play-state:paused;opacity:.4}
+.kn{font-size:10.5px;color:var(--txt);line-height:1.5;font-weight:500}
+.skel{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--line) 25%,var(--line2) 37%,var(--line) 63%);background-size:400% 100%;animation:sk 1.4s ease infinite;margin-bottom:6px}
+@keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+.preset{border:1px solid var(--line);border-radius:9px;padding:8px 9px;background:var(--panel);display:flex;gap:7px;align-items:center;font-size:10px}
+.preset .ico{width:20px;height:20px;border-radius:5px;background:var(--accent-bg);color:var(--accent);display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+.preset b{display:block;font-size:10px;color:var(--txt)}
+.preset span{font-size:8.5px;color:var(--txt3)}
+.wa{background:#0E1A16;border:1px solid #1E3A30;border-radius:9px;padding:8px;font-size:9.5px;color:#B7E4CE;line-height:1.5}
+.wa b{color:#25D366;font-size:8.5px;display:block;margin-bottom:4px;letter-spacing:.05em}
+.dropzone{border:2px dashed var(--line2);border-radius:12px;padding:26px 16px;text-align:center;background:var(--panel2)}
+.dropzone.hot{border-color:var(--accent);background:var(--accent-bg);animation:hotPulse 1.6s ease-in-out infinite}
+@keyframes hotPulse{0%,100%{box-shadow:0 0 0 0 var(--accent-bg)}50%{box-shadow:0 0 0 10px transparent}}
+.dropzone .dz-icon{font-size:28px;margin-bottom:6px}
+.dropzone b{display:block;font-size:11px;color:var(--txt);margin-bottom:3px}
+.dropzone span{font-size:9.5px;color:var(--txt3)}
+.dropzone .dz-file{margin-top:9px;display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--accent);padding:5px 10px;border-radius:7px;font-size:10px;color:var(--txt)}
+.recent-item{display:flex;gap:8px;align-items:center;padding:8px 9px;border-radius:8px;border:1px solid var(--line);background:var(--panel);margin-bottom:5px;font-size:10px}
+.recent-item .r-ico{width:22px;height:22px;border-radius:5px;background:var(--accent-bg);color:var(--accent);display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+.recent-item b{display:block;font-size:10px;color:var(--txt)}
+.recent-item span{font-size:8.5px;color:var(--txt3)}
+.recent-item .r-score{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700}
+.ocr-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:9.5px;color:var(--txt2)}
+.ocr-bar .progress{flex:1;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.ocr-bar .progress>i{display:block;height:100%;width:62%;background:var(--accent);border-radius:2px}
+.ocr-page{background:linear-gradient(135deg,#E4E8EF,#C9D1DE);border-radius:6px;height:60px;position:relative;overflow:hidden;margin-bottom:5px}
+.ocr-page::after{content:"Processing…";position:absolute;inset:0;display:grid;place-items:center;font-size:9px;color:#3C465A;font-weight:600;background:rgba(255,255,255,.7)}
+
+/* PHONE */
+.phone{width:296px;border-radius:32px;border:7px solid #1A1F29;background:var(--bg2);overflow:hidden;box-shadow:var(--shadow);position:relative;flex:0 0 auto}
+[data-theme="light"] .phone{border-color:#1A1F29}
+.phone .notch{height:22px;background:#1A1F29;display:flex;align-items:center;justify-content:center}
+.phone .notch i{width:52px;height:5px;border-radius:3px;background:#333B48}
+.screen{height:520px;overflow-y:auto;padding:11px;background:var(--bg);display:flex;flex-direction:column;gap:9px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.s-top{display:flex;align-items:center;gap:6px}
+.s-top b{font-size:11px}
+.s-top .dot3{margin-left:auto;color:var(--txt3);font-size:13px;letter-spacing:1px}
+.s-title{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-weight:700}
+.s-card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px}
+.s-page{background:#fff;color:#0B0F18;border-radius:8px;padding:9px;overflow:hidden;position:relative}
+.s-page .ln{height:4px;margin:4px 0}
+.s-page .hl{font-size:8px;padding:4px 5px;margin:5px 0}
+.s-nav{display:flex;gap:4px;border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+.s-nav i{flex:1;text-align:center;font-size:8px;font-style:normal;color:var(--txt3);font-weight:700}
+.s-nav i.on{color:var(--accent)}
+.sticky-voice{position:sticky;bottom:0;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;align-items:center;gap:7px;font-size:9.5px}
+.play{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:9px;flex:0 0 auto;cursor:pointer}
+.s-lang{display:flex;gap:3px;margin-bottom:7px}
+.s-lang i{flex:1;text-align:center;font-size:9px;font-style:normal;font-weight:700;padding:4px 0;border-radius:5px;background:var(--panel2);border:1px solid var(--line);color:var(--txt3);cursor:pointer;transition:.15s}
+.s-lang i.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* MOCK ENHANCEMENTS — variant bar, slider, snippet */
+.mocks-toolbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:16px;font-size:12.5px;color:var(--txt2)}
+.mocks-toolbar .hint{display:flex;align-items:center;gap:6px}
+.mocks-toolbar .hint::before{content:"↗";color:var(--accent);font-weight:700}
+.data-panel{margin-bottom:18px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.data-panel summary{cursor:pointer;padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--txt2);list-style:none;display:flex;align-items:center;gap:8px}
+.data-panel summary::-webkit-details-marker{display:none}
+.data-panel summary::before{content:"▸";color:var(--accent);transition:transform .2s;display:inline-block}
+.data-panel[open] summary::before{transform:rotate(90deg)}
+.data-panel .code{border:0;border-radius:0;border-top:1px solid var(--line);max-height:420px;overflow:auto;margin:0;font-size:11px}
+.data-panel .data-bar{padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt2);margin-bottom:14px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:block}
+
+/* Variant pills */
+.variant-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.variant-pill{padding:6px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font:inherit;font-size:12px}
+.variant-pill:hover{border-color:var(--accent);color:var(--txt)}
+.variant-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* View slider */
+.view-slider{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:10px 16px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r)}
+.vs-label{font-size:11.5px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;min-width:64px;transition:.2s;user-select:none}
+.vs-label.on{color:var(--accent)}
+.vs-label.vs-mobile{text-align:left}
+.vs-label.vs-desktop{text-align:right}
+.vs-range{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--line);outline:none;cursor:pointer}
+.vs-range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--panel);box-shadow:0 2px 6px rgba(0,0,0,.3);transition:.15s}
+.vs-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--panel);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+/* Preview area */
+.preview-area{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;justify-content:center;align-items:flex-start;min-height:400px;overflow:hidden}
+.preview-area[data-view="mobile"] .preview-desktop{display:none}
+.preview-area[data-view="desktop"] .preview-mobile{display:none}
+.preview-mobile{display:flex;justify-content:center}
+.preview-desktop{width:100%;max-width:820px}
+
+/* Snippet */
+.snippet-panel{margin-top:14px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.snippet-panel>summary{padding:10px 14px;font-size:12px;font-weight:600;color:var(--txt2);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;user-select:none}
+.snippet-panel>summary::-webkit-details-marker{display:none}
+.snippet-panel>summary::before{content:"</>";color:var(--accent);font-family:var(--mono);font-size:10.5px}
+.snippet-panel[open]>summary{border-bottom:1px solid var(--line)}
+.snippet-body{padding:12px;background:var(--bg2)}
+.snippet-body .btn{margin-bottom:10px}
+.snippet-code{max-height:400px;overflow:auto;margin:0;font-size:10.5px}
+.hl.focus-pulse{animation:focusPulse 1.4s ease}
+@keyframes focusPulse{0%,100%{box-shadow:0 0 0 0 rgba(91,140,255,.7)}50%{box-shadow:0 0 0 8px rgba(91,140,255,0)}}
+.copied{background:var(--green)!important;color:#fff!important;border-color:var(--green)!important}
+
+/* RESPONSIVE */
+@media(max-width:980px){.cs-layout{grid-template-columns:1fr}.rail{display:none}}
+@media(max-width:640px){
+  body{font-size:14px}
+  .wrap{padding:0 14px}
+  .brand span{display:none}
+  .tab{padding:7px 12px;font-size:12px}
+  .hero{padding:18px}
+  .acc-body{padding:14px}
+  details.acc>summary{padding:13px 14px;font-size:13.5px}
+  .mock-card{padding:13px}
+  main{padding:18px 0 60px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">
+      <div class="logo">SC</div>
+      <div><b>SignClear X-Ray</b><span>RFS 30 · Understand Before You Sign · Docusign</span></div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="cheat" role="tab">Cheat Sheet</button>
+      <button class="tab" data-view="mocks" role="tab">Screen Mocks</button>
+    </nav>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- CHEAT SHEET VIEW — content unchanged from previous version -->
+<section id="view-cheat">
+  <div class="cs-layout">
+    <nav class="rail" id="rail">
+      <a href="#pick" class="on">01 · The Pick</a>
+      <a href="#triage">02 · Triage of 77</a>
+      <a href="#why">03 · Why It Wins</a>
+      <a href="#design">04 · Design System</a>
+      <a href="#prd">05 · PRD</a>
+      <a href="#stack">06 · Tech Stack</a>
+      <a href="#prompt">07 · The Prompt</a>
+      <a href="#moments">08 · Moment Charts</a>
+      <a href="#tradeoffs">09 · Trade-offs</a>
+      <a href="#benchmarks">10 · India Benchmarks</a>
+      <a href="#oss">11 · Open Source</a>
+      <a href="#plan">12 · Build Plan</a>
+      <a href="#later">13 · Parked Ideas</a>
+    </nav>
+    <div>
+      <div class="hero">
+        <div class="badges">
+          <span class="pill blue"><span class="dot"></span>Unanimous #1 of 77</span>
+          <span class="pill green">Zero backend traps</span>
+          <span class="pill ghost">Buildable in 4 hrs</span>
+          <span class="pill ghost">Anthropic × Docusign × Sarvam</span>
+        </div>
+        <h1>SignClear X-Ray — a Visual Contract X-Ray Studio</h1>
+        <p class="lede">Not a PDF chatbot. A real Indian rental agreement, loan document, or offer letter lights up live with colour-coded bounding boxes, synced to a regional-language voice walkthrough — plus an India-specific benchmark engine.</p>
+        <div class="stat-row">
+          <div class="stat"><b>≤ 8s</b><span>To first highlight</span></div>
+          <div class="stat"><b>15s</b><span>Stage gasp moment</span></div>
+          <div class="stat"><b>5</b><span>Risk pillars</span></div>
+          <div class="stat"><b>$0.13</b><span>Per full contract</span></div>
+          <div class="stat"><b>0</b><span>Bytes of PII sent</span></div>
+        </div>
+      </div>
+
+      <div class="cs-tools">
+        <div class="search"><input id="csFilter" type="search" placeholder="Filter sections — e.g. 'PII', 'radar', 'Sarvam', 'trade-off'…" aria-label="Filter cheat sheet" /></div>
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <div class="no-res" id="noRes">No section matches that filter.</div>
+
+      <details class="acc" id="pick" open>
+        <summary><span class="acc-num">01</span> The Pick — RFS 30 "Understand Before You Sign"</summary>
+        <div class="acc-body">
+          <div class="grid g2">
+            <div class="card"><span class="kicker">Submitted by</span><h4>Prashanth Rao</h4><p>Senior Director &amp; India Product Head, <strong>Docusign</strong>. Solving a sponsor's own brief is the strongest possible demo alignment.</p></div>
+            <div class="card"><span class="kicker">The one-line pitch</span><h4>"X-ray your contract before you sign it."</h4><p>Upload / pick an Indian contract → clauses light up red-amber-green on the page → hear it explained in Kannada, Hindi or Tamil → copy a WhatsApp-ready question for the landlord.</p></div>
+          </div>
+          <div class="callout"><b>Positioning:</b> "Everyone else builds a PDF chatbot. We built a machine that makes an unfair clause <em>physically glow</em> on the page — in your mother tongue."</div>
+          <h5>Non-negotiable product rules</h5>
+          <ul>
+            <li><strong>Zero chatbox</strong> — the document itself is the interface.</li>
+            <li><strong>Verbatim grounding</strong> — the model may only quote exact substrings.</li>
+            <li><strong>Fail-closed PII</strong> — Aadhaar, PAN, phone, names masked in-browser <em>before</em> any network call.</li>
+            <li><strong>India-first benchmarks</strong> — a curated JSON of Indian norms is the moat.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc" id="triage">
+        <summary><span class="acc-num">02</span> Triage of all 77 requests — four buckets</summary>
+        <div class="acc-body">
+          <div class="grid g2" style="margin-bottom:14px">
+            <div class="card"><span class="kicker">Bucket A · 49 killed</span><h4>Low visual mindshare / pure infrastructure</h4><p>Telephony, backend plumbing, accelerators, text-heavy workflows where the demo collapses into a dashboard or a chat transcript.</p></div>
+            <div class="card"><span class="kicker">Bucket B · 14 killed</span><h4>Visually seductive, impossible backend</h4><p>Look incredible in your head; carry hidden technical, data or platform cliffs that destroy a 4-hour demo.</p></div>
+          </div>
+          <h5>Bucket A — eliminated IDs</h5>
+          <div class="chips"><span class="chip cut">RFS 02</span><span class="chip cut">03</span><span class="chip cut">04</span><span class="chip cut">05</span><span class="chip cut">06</span><span class="chip cut">07</span><span class="chip cut">09</span><span class="chip cut">11</span><span class="chip cut">12</span><span class="chip cut">13</span><span class="chip cut">14</span><span class="chip cut">15</span><span class="chip cut">17</span><span class="chip cut">18</span><span class="chip cut">19</span><span class="chip cut">23</span><span class="chip cut">26</span><span class="chip cut">27</span><span class="chip cut">29</span><span class="chip cut">32</span><span class="chip cut">33</span><span class="chip cut">34</span><span class="chip cut">35</span><span class="chip cut">36</span><span class="chip cut">37</span><span class="chip cut">39</span><span class="chip cut">40</span><span class="chip cut">41</span><span class="chip cut">42</span><span class="chip cut">43</span><span class="chip cut">45</span><span class="chip cut">46</span><span class="chip cut">47</span><span class="chip cut">49</span><span class="chip cut">51</span><span class="chip cut">52</span><span class="chip cut">55</span><span class="chip cut">58</span><span class="chip cut">59</span><span class="chip cut">60</span><span class="chip cut">61</span><span class="chip cut">63</span><span class="chip cut">64</span><span class="chip cut">65</span><span class="chip cut">66</span><span class="chip cut">67</span><span class="chip cut">68</span><span class="chip cut">70</span><span class="chip cut">71</span><span class="chip cut">74</span><span class="chip cut">76</span></div>
+          <h5>Bucket B — the 14 "impossible backend" traps</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>RFS</th><th>Idea</th><th>Why it dies in 4 hours</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">21, 25, 56, 62, 75</td><td>Deep-tech moonshots</td><td>Cannot be credibly validated in an afternoon.</td></tr>
+                <tr><td class="mono">10</td><td>Gold purity from photo</td><td>indiagold spent 4 years stuck at 85% accuracy. Needs proprietary spectral data.</td></tr>
+                <tr><td class="mono">24</td><td>Hyperlocal weather</td><td>Requires live meteorological ingestion + gridded feeds.</td></tr>
+                <tr><td class="mono">48</td><td>Cursor for 3D CAD</td><td>True manufacturable B-rep geometry is a trap.</td></tr>
+                <tr><td class="mono">44</td><td>One moment, ten photos</td><td>Finicky CV tuning; "Apple Photos already does this."</td></tr>
+                <tr><td class="mono">72</td><td>Is this listing real?</td><td>Live scraping breaks under Cloudflare/CAPTCHA — on stage.</td></tr>
+                <tr><td class="mono">22, 57</td><td>AI yoga tutor / physical-world AI</td><td>Pose-counting is a hackathon trope.</td></tr>
+                <tr><td class="mono">01, 77</td><td>Made-in-India games / kirana copilot</td><td>Weaker alignment with Senior PM / fintech positioning.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h5>Bucket C — the 4 visual finalists, head-to-head</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Finalist</th><th>Visual centrepiece</th><th>Hidden backend risk</th><th>OSS tonight</th><th>DNA fit</th></tr></thead>
+              <tbody>
+                <tr><td><strong>#1 · RFS 30</strong><br><span class="dim">Understand Before You Sign (Docusign)</span></td><td>Live document X-ray — red/amber/green clause boxes + Risk Radar synced to regional voice</td><td><span class="pill green">None</span></td><td>Very high</td><td><span class="pill green">10/10</span></td></tr>
+                <tr><td><strong>#2 · RFS 31</strong><br><span class="dim">Stop the Scam (Mixpanel)</span></td><td>Split-screen UPI firewall — scam-call waveform + coercion tracker</td><td><span class="pill amber">Medium</span> OS trap: iOS/Android block live call audio</td><td>Medium</td><td><span class="pill blue">9.5/10</span></td></tr>
+                <tr><td><strong>#3 · RFS 50 + 28</strong><br><span class="dim">Outcome-cost &amp; evals</span></td><td>Observatory Noir trace studio — token-vs-outcome frontier</td><td><span class="pill green">Low</span></td><td>Very high</td><td><span class="pill blue">9/10</span></td></tr>
+                <tr><td><strong>#4 · RFS 69 / 16</strong><br><span class="dim">AI beyond chat (Nexus VP / 3one4)</span></td><td>Spatial infinite canvas — sketch objects, AI manipulates</td><td><span class="pill red">High</span> Time trap: tldraw eats 3+ hrs</td><td>High</td><td><span class="pill ghost">7/10</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn"><b>Deciding question:</b> "Which one can I demo at 6:00 PM with no asterisks?" Only RFS 30.</div>
+        </div>
+      </details>
+
+      <details class="acc" id="why">
+        <summary><span class="acc-num">03</span> Why RFS 30 wins every expert angle</summary>
+        <div class="acc-body">
+          <div class="grid g2">
+            <div class="card"><span class="kicker">Visual UX</span><h4>Beat the PDF-chatbot default</h4><p>Render the <em>actual page</em>, put a Fairness Gauge + 5-pillar Risk Radar beside it, and clicking a card scrolls the PDF, pulses the exact clause, narrates it. Hits <strong>RFS 30 + RFS 69</strong> simultaneously.</p></div>
+            <div class="card"><span class="kicker">Systems Architect</span><h4>No cliffs, no asterisks</h4><p>No OS call-interception (RFS 31), no Cloudflare-blocked scraper (RFS 72), no custom training. All deterministic, fast, cheap.</p></div>
+            <div class="card"><span class="kicker">Hackathon Judge</span><h4>Copy the winning patterns</h4><p><strong>Tekton</strong>: clickable evidence chain. <strong>Wrench Board</strong>: document lighting up step-by-step. <strong>MaestrIA</strong>: curated local benchmark JSON.</p></div>
+            <div class="card"><span class="kicker">Career Strategist</span><h4>Fresh repo, proven judgement</h4><p>Channels exactly what you've shipped: local PDF.js extraction, fail-closed PII redaction, zero-hallucination grounding, weighted risk scoring.</p></div>
+          </div>
+          <div class="callout"><b>Sponsor synergy:</b> Anthropic (Claude) audits clauses · Sarvam / smallest.ai narrate in Indian languages · Docusign's own India Product Head authored the request. Three sponsors satisfied by one demo.</div>
+        </div>
+      </details>
+
+      <details class="acc" id="design">
+        <summary><span class="acc-num">04</span> Design system — tokens, components, motion, a11y</summary>
+        <div class="acc-body">
+          <h5>Colour — semantic, not decorative</h5>
+          <p style="margin-bottom:10px">Risk colour is a data channel, so it must never be the <em>only</em> channel. Every severity also carries a label + clause ID (WCAG 1.4.1).</p>
+          <div class="grid g4" style="margin-bottom:14px">
+            <div class="sw"><i style="background:#FF5A5F"></i> Predatory <code>--red</code></div>
+            <div class="sw"><i style="background:#FFB020"></i> Negotiate <code>--amber</code></div>
+            <div class="sw"><i style="background:#2ED47A"></i> Fair <code>--green</code></div>
+            <div class="sw"><i style="background:#5B8CFF"></i> Action <code>--accent</code></div>
+          </div>
+          <div class="callout warn"><b>Projector rule:</b> default to <strong>Clean Light</strong> on stage — dark UI crushes on cheap projectors. Keep <strong>X-Ray Noir</strong> as a one-tap toggle for the deck.</div>
+          <h5>Typography</h5>
+          <ul>
+            <li><strong>UI:</strong> Inter / Geist — 12 / 13 / 15 / 20 / 28 / 40, tight tracking (−1.5%).</li>
+            <li><strong>Data:</strong> JetBrains Mono for clause IDs (<code>R1</code>), scores, coordinates.</li>
+            <li><strong>Number rule:</strong> safety score ≥ 19px, tabular figures.</li>
+          </ul>
+          <h5>Core components</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Component</th><th>States</th><th>Rule</th></tr></thead>
+              <tbody>
+                <tr><td><strong>ClauseHighlight</strong></td><td>off · on · pulse</td><td>Off = 18% opacity + grayscale. Active gets 1.6s pulse + auto-scroll.</td></tr>
+                <tr><td><strong>RiskBadge</strong></td><td>red / amber / green</td><td>Text + colour. Never colour alone.</td></tr>
+                <tr><td><strong>ScoreDial</strong></td><td>0–100</td><td>conic-gradient ring; number centred, tabular.</td></tr>
+                <tr><td><strong>LanguagePillBar</strong></td><td>EN / हि / ಕ / த</td><td>Active = accent fill.</td></tr>
+                <tr><td><strong>PII Shield pill</strong></td><td>scanning / active / failed</td><td>On failure the app refuses to call the API.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h5>Motion</h5>
+          <ul>
+            <li>Box reveal: 500ms <code>cubic-bezier(.22,1,.36,1)</code>, staggered 80ms.</li>
+            <li>Auto-scroll: 400ms smooth; narration starts after scroll settles.</li>
+            <li>All motion disabled under <code>prefers-reduced-motion</code>.</li>
+          </ul>
+          <h5>Accessibility &amp; trust</h5>
+          <ul>
+            <li>All text ≥ 4.5:1. Clause boxes are real buttons, keyboard-focusable.</li>
+            <li>Screen-reader announces: "Clause 3 of 4, red, painting charges, page 2".</li>
+            <li>Persistent chip: "Explains risk. Not legal advice."</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc" id="prd">
+        <summary><span class="acc-num">05</span> PRD — problem, users, scope, metrics</summary>
+        <div class="acc-body">
+          <h5>Problem statement</h5>
+          <p>Indian rental agreements, personal-loan T&amp;Cs and offer letters are dense, English-heavy, and full of locally-normalised traps — a 10-month deposit, an 11-month lock-in that forfeits the deposit, unilateral 15% escalation, one-month painting deductions, bond clauses. People sign because reading them is expensive. Generic legal AI gives US-shaped advice.</p>
+          <h5>Target users</h5>
+          <div class="grid g3" style="margin-bottom:14px">
+            <div class="card"><h4>First-time renter</h4><p>22–28, Bengaluru / Pune / Hyderabad. Signing a leave-and-license this week.</p></div>
+            <div class="card"><h4>Instant-loan borrower</h4><p>Gig worker or salaried 25–35 taking a ₹50k–₹2L personal loan.</p></div>
+            <div class="card"><h4>Fresher with an offer letter</h4><p>22–24, first job. Training bond, IP clause, non-compete.</p></div>
+          </div>
+          <h5>Scope</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Priority</th><th>Capability</th><th>Ship state</th></tr></thead>
+              <tbody>
+                <tr><td><span class="pill green">Must</span></td><td>PDF render + verbatim clause bounding boxes</td><td>PDF.js + react-pdf-highlighter-extended</td></tr>
+                <tr><td><span class="pill green">Must</span></td><td>Client-side PII shield</td><td>Regex + token substitution, fail-closed</td></tr>
+                <tr><td><span class="pill green">Must</span></td><td>Claude structured clause audit</td><td>JSON-schema output, grounding enforced</td></tr>
+                <tr><td><span class="pill green">Must</span></td><td>Safety score + 5-pillar risk bars</td><td>Deterministic weighted scoring</td></tr>
+                <tr><td><span class="pill amber">Should</span></td><td>Regional voice walkthrough</td><td>Sarvam or smallest.ai; browser TTS fallback</td></tr>
+                <tr><td><span class="pill amber">Should</span></td><td>WhatsApp negotiation question</td><td>Claude-generated, ≤ 25 words</td></tr>
+                <tr><td><span class="pill ghost">Won't</span></td><td>Legal advice, e-signing, chat, accounts, DB</td><td>Explicitly out of scope</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h5>Success metrics</h5>
+          <ul>
+            <li><strong>Time to first highlight</strong> &lt; 8s from preset click.</li>
+            <li><strong>≥ 3 red/amber flags</strong> on every preset.</li>
+            <li><strong>Voice play rate</strong> — strongest "it's real" signal.</li>
+            <li><strong>PII leakage = 0</strong> — asserted live, on stage.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc" id="stack">
+        <summary><span class="acc-num">06</span> Technical stack, data flow &amp; locked JSON contract</summary>
+        <div class="acc-body">
+          <h5>Stack</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
+              <tbody>
+                <tr><td>App shell</td><td>React + Vite + TS + Tailwind</td><td>Fastest path to a polished 60/40 layout</td></tr>
+                <tr><td>PDF + highlights</td><td><code>react-pdf-highlighter-extended</code></td><td>Viewport-independent text highlights</td></tr>
+                <tr><td>Grounding engine</td><td><code>page.getTextContent()</code> → chunk cache</td><td>Match verbatim strings → QuadPoints</td></tr>
+                <tr><td>PII shield</td><td>Local regex + name heuristics</td><td>Runs in-browser; API key never sees identity</td></tr>
+                <tr><td>LLM</td><td>Claude Sonnet, JSON-schema output</td><td>~$0.13 per full contract</td></tr>
+                <tr><td>Benchmarks</td><td><code>indian_legal_benchmarks.json</code></td><td>The domain moat</td></tr>
+                <tr><td>Voice</td><td>Sarvam / smallest.ai TTS</td><td><code>speechSynthesis</code> fallback</td></tr>
+                <tr><td>Charts</td><td>SVG radar + CSS bars</td><td>Small bundle</td></tr>
+                <tr><td>State</td><td>Zustand + localStorage</td><td>No backend, no DB, no auth</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h5>Locked JSON contract</h5>
+          <div class="code-wrap">
+            <button class="copy">Copy</button>
+            <pre class="code">{
+  <span class="k">"doc_id"</span>: <span class="s">"rent-blr-01"</span>,
+  <span class="k">"doc_type"</span>: <span class="s">"rental"</span>,
+  <span class="k">"overall_score"</span>: 42,
+  <span class="k">"verdict"</span>: <span class="s">"sign_with_caution"</span>,
+  <span class="k">"pillars"</span>: [ <span class="c">/* 5 axes */</span> ],
+  <span class="k">"clauses"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"R1"</span>,
+      <span class="k">"severity"</span>: <span class="s">"red"</span>,
+      <span class="k">"pillar"</span>: <span class="s">"hidden_penalties"</span>,
+      <span class="k">"page"</span>: 2,
+      <span class="k">"verbatim"</span>: <span class="s">"exact substring from contract"</span>,
+      <span class="k">"plain"</span>: <span class="s">"≤30 words, 8th-grade English"</span>,
+      <span class="k">"benchmark"</span>: { <span class="k">"norm"</span>:<span class="s">"..."</span>, <span class="k">"delta"</span>:<span class="s">"..."</span> },
+      <span class="k">"question"</span>: <span class="s">"≤25 words WhatsApp-ready"</span>
+    }
+  ],
+  <span class="k">"voice_script"</span>: { <span class="k">"en"</span>:<span class="s">"..."</span>, <span class="k">"hi"</span>:<span class="s">"..."</span>, <span class="k">"kn"</span>:<span class="s">"..."</span>, <span class="k">"ta"</span>:<span class="s">"..."</span> }
+}</pre>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc" id="prompt">
+        <summary><span class="acc-num">07</span> The Claude prompt (system + guardrails)</summary>
+        <div class="acc-body">
+          <div class="code-wrap">
+            <button class="copy">Copy</button>
+            <pre class="code">You are SignClear, an Indian consumer-contract auditor.
+
+INPUT
+  &lt;contract&gt;   redacted text with [PERSON_1]/[AADHAAR_1]/[PHONE_1] tokens
+  &lt;benchmarks&gt; indian_legal_benchmarks.json — the ONLY source of "normal"
+  &lt;doc_type&gt;   rental | loan | offer
+
+RULES
+1. GROUNDING — every clause.verbatim MUST be an exact substring.
+   If you cannot copy exact text, OMIT the clause. Never paraphrase.
+2. NO LEGAL ADVICE — explain risk and what to ask.
+   Use "unusual", "aggressive", "worth negotiating".
+3. INDIA-FIRST — judge only against &lt;benchmarks&gt;.
+4. SEVERITY — red = predatory; amber = negotiable; green = fair. Include ≥1 green.
+5. PILLARS — exactly one of: financial_traps | lockin_exit |
+   unilateral_rights | hidden_penalties | dispute_fairness
+6. PLAIN SPEECH — ≤30 words, second person.
+7. QUESTION — ≤25 words, polite, specific, WhatsApp-ready.
+8. VOICE SCRIPT — 45–60s per language (en, hi, kn, ta). No bullets.
+9. OUTPUT — JSON only, matching SCHEMA exactly.
+10. If clean, say so: overall_score ≥ 80, verdict "safe". Do not manufacture risk.
+
+SCHEMA
+&lt;insert locked JSON contract&gt;</pre>
+          </div>
+          <div class="callout"><b>Why this wins:</b> rules 1, 2 and 10 are the three things judges probe. Rule 1 kills hallucination, rule 2 kills liability, rule 10 kills the "AI that cries wolf" failure.</div>
+        </div>
+      </details>
+
+      <details class="acc" id="moments">
+        <summary><span class="acc-num">08</span> Moment charts — stage timeline, journey map, scoring</summary>
+        <div class="acc-body">
+          <h5>Stage moment chart — the 15-second gasp</h5>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-t">T+0s</div><div class="tl-h">Click "Bengaluru Rental Agreement"</div><div class="tl-d">4-page dense legal PDF renders. PII Shield pill goes green. Judge leans in.</div></div>
+            <div class="tl-item hot"><div class="tl-t">T+2s → T+5s</div><div class="tl-h">The document lights up</div><div class="tl-d">Four red/amber boxes pop in, staggered. Score dial animates 0 → 42.</div></div>
+            <div class="tl-item"><div class="tl-t">T+6s</div><div class="tl-h">Click the 11-month lock-in card</div><div class="tl-d">PDF auto-scrolls, exact paragraph pulses. Benchmark comparison shows.</div></div>
+            <div class="tl-item hot"><div class="tl-t">T+9s</div><div class="tl-h">Hit "Play in Kannada"</div><div class="tl-d">Crisp regional voice calls out the painting deduction. Emotional peak.</div></div>
+            <div class="tl-item"><div class="tl-t">T+13s</div><div class="tl-h">"Copy negotiation question"</div><div class="tl-d">WhatsApp-ready counter-message appears. Proves action.</div></div>
+            <div class="tl-item"><div class="tl-t">T+15s</div><div class="tl-h">Switch to Offer Letter preset</div><div class="tl-d">Same 5s magic on a different doc class. Proves it's a platform.</div></div>
+          </div>
+          <h5>Scoring model</h5>
+          <div class="code-wrap">
+            <button class="copy">Copy</button>
+            <pre class="code">penalty = { red: 22, amber: 9, green: 0 }
+pillarScore = clamp(100 - Σ penalty(clauses in pillar), 0, 100)
+
+weights = { financial_traps:.30, lockin_exit:.25, unilateral_rights:.20,
+            hidden_penalties:.15, dispute_fairness:.10 }
+
+overall = round(Σ pillarScore × weight)
+verdict = overall ≥ 80 ? "safe" : overall ≥ 50 ? "sign_with_caution" : "do_not_sign"</pre>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc" id="tradeoffs">
+        <summary><span class="acc-num">09</span> Trade-offs — every decision and what it cost</summary>
+        <div class="acc-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Decision</th><th>Chose</th><th>Rejected</th><th>Why</th><th>Cost</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Which RFS</strong></td><td>RFS 30</td><td>RFS 31 (UPI scam)</td><td>RFS 31 has a fatal OS question: how does a UPI app access live call audio?</td><td>Less emotional subject</td></tr>
+                <tr><td><strong>Interface</strong></td><td>Zero chatbox</td><td>PDF chatbot</td><td>Everyone builds the chatbot; wastes the projector.</td><td>Harder engineering</td></tr>
+                <tr><td><strong>Grounding</strong></td><td>Verbatim-only</td><td>LLM paraphrase</td><td>One mis-highlighted box on stage destroys credibility.</td><td>Lower recall</td></tr>
+                <tr><td><strong>PII</strong></td><td>Client-side, fail-closed</td><td>Server redaction</td><td>"The bytes never left the browser" lands on stage.</td><td>Over-masking occasionally</td></tr>
+                <tr><td><strong>Demo input</strong></td><td>3 presets + upload</td><td>Upload-only</td><td>Live upload with unfamiliar PDF is the #1 stage failure mode.</td><td>Presets can feel canned</td></tr>
+                <tr><td><strong>Voice</strong></td><td>Sarvam + fallback</td><td>Browser TTS only</td><td>Natural Indian-language prosody is the emotional peak.</td><td>Extra API key + latency</td></tr>
+                <tr><td><strong>Domain</strong></td><td>Curated JSON</td><td>Model's legal knowledge</td><td>Benchmark JSON is the moat.</td><td>Hand-written tonight</td></tr>
+                <tr><td><strong>Theme</strong></td><td>Light default</td><td>Dark only</td><td>Dark UI crushes on cheap projectors.</td><td>Two token sets</td></tr>
+                <tr><td><strong>Persistence</strong></td><td>No backend</td><td>Accounts + history</td><td>4-hour build.</td><td>No multi-session story</td></tr>
+                <tr><td><strong>Charts</strong></td><td>SVG radar</td><td>Chart library</td><td>Bundle size.</td><td>Less interactivity</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout danger"><b>Defend this if a judge pushes:</b> "You drop clauses when grounding fails — aren't you hiding risk?" Answer: "We'd rather show three boxes we can prove than ten we can't. Every drop is logged and we show the count."</div>
+        </div>
+      </details>
+
+      <details class="acc" id="benchmarks">
+        <summary><span class="acc-num">10</span> indian_legal_benchmarks.json — the domain moat</summary>
+        <div class="acc-body">
+          <p>This file is the difference between "generic legal AI" and a product an Indian PM instantly trusts.</p>
+          <div class="code-wrap">
+            <button class="copy">Copy</button>
+            <pre class="code">{
+  <span class="k">"rental"</span>: [
+    { <span class="k">"id"</span>:<span class="s">"deposit"</span>, <span class="k">"norm"</span>:<span class="s">"1–3 months' rent (Bengaluru typically 2–3)"</span> },
+    { <span class="k">"id"</span>:<span class="s">"lockin"</span>, <span class="k">"norm"</span>:<span class="s">"11-month leave-and-license; lock-in 1–6 months"</span> },
+    { <span class="k">"id"</span>:<span class="s">"notice"</span>, <span class="k">"norm"</span>:<span class="s">"1–2 months mutual"</span> },
+    { <span class="k">"id"</span>:<span class="s">"escalation"</span>, <span class="k">"norm"</span>:<span class="s">"5–10% annual, stated upfront"</span> },
+    { <span class="k">"id"</span>:<span class="s">"painting"</span>, <span class="k">"norm"</span>:<span class="s">"actual cost, ₹3,000–8,000"</span> },
+    { <span class="k">"id"</span>:<span class="s">"refund"</span>, <span class="k">"norm"</span>:<span class="s">"within 30 days of vacating"</span> }
+  ],
+  <span class="k">"loan"</span>: [
+    { <span class="k">"id"</span>:<span class="s">"cooling_off"</span>, <span class="k">"norm"</span>:<span class="s">"RBI mandatory look-up period"</span> },
+    { <span class="k">"id"</span>:<span class="s">"penal_charges"</span>, <span class="k">"norm"</span>:<span class="s">"flat charge, not compounded interest (RBI 2023)"</span> },
+    { <span class="k">"id"</span>:<span class="s">"foreclosure_home"</span>, <span class="k">"norm"</span>:<span class="s">"no charges on floating-rate home loans"</span> },
+    { <span class="k">"id"</span>:<span class="s">"bounce"</span>, <span class="k">"norm"</span>:<span class="s">"₹500–1,000 typical, ₹2,500+ aggressive"</span> }
+  ],
+  <span class="k">"offer"</span>: [
+    { <span class="k">"id"</span>:<span class="s">"bond"</span>, <span class="k">"norm"</span>:<span class="s">"enforceable only for actual training cost"</span> },
+    { <span class="k">"id"</span>:<span class="s">"noncompete"</span>, <span class="k">"norm"</span>:<span class="s">"unenforceable post-employment (Contract Act s.27)"</span> },
+    { <span class="k">"id"</span>:<span class="s">"ip"</span>, <span class="k">"norm"</span>:<span class="s">"scoped to work done for employer"</span> },
+    { <span class="k">"id"</span>:<span class="s">"esop"</span>, <span class="k">"norm"</span>:<span class="s">"1-year cliff + 4-year vest"</span> }
+  ]
+}</pre>
+          </div>
+          <div class="callout"><b>On stage:</b> open this file in a flash. "Our moat isn't the model — it's this." Answers "why can't ChatGPT do this?"</div>
+        </div>
+      </details>
+
+      <details class="acc" id="oss">
+        <summary><span class="acc-num">11</span> Open-source references to study tonight (45–60 min)</summary>
+        <div class="acc-body">
+          <div class="grid g2">
+            <div class="card"><span class="kicker">1 · Core UI mechanic</span><h4><a href="https://github.com/DanielArnould/react-pdf-highlighter-extended" target="_blank" rel="noopener">react-pdf-highlighter-extended</a></h4><p>React + PDF.js for viewport-independent text highlights with custom colour categories and hover popups.</p></div>
+            <div class="card"><span class="kicker">1b · The algorithm</span><h4><a href="https://github.com/GiesDSRS/pdf-highlighter" target="_blank" rel="noopener">GiesDSRS / pdf-highlighter</a></h4><p>Caches <code>(transform, width, height)</code> per chunk, matches verbatim strings, computes QuadPoints.</p></div>
+            <div class="card"><span class="kicker">2 · LLM architecture</span><h4><a href="https://github.com/aws-samples/sample-ai-powered-contract-analyzer" target="_blank" rel="noopener">aws-samples / contract-analyzer</a></h4><p>Feeding contracts to Claude for structured extraction. ~$0.13 per contract.</p></div>
+            <div class="card"><span class="kicker">3 · Visual taste</span><h4>Docusign Navigator · Spellbook · Acrobat AI</h4><p>Screenshot their clause jump-links and severity badges. Study the density.</p></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc" id="plan">
+        <summary><span class="acc-num">12</span> Build plan — 60 min tonight, 4 hours tomorrow</summary>
+        <div class="acc-body">
+          <h5>Tonight · 60 minutes · zero app code</h5>
+          <ul>
+            <li><strong>Create 3 sample PDFs.</strong> 3-page Bengaluru rental with 4 predatory clauses; 2-page personal loan with hidden foreclosure; 2-page offer letter with bond/IP clause.</li>
+            <li><strong>Draft <code>indian_legal_benchmarks.json</code></strong> — 15–20 concrete Indian norms.</li>
+            <li><strong>Verify 2 API keys</strong> — Anthropic + Sarvam (with <code>speechSynthesis</code> fallback).</li>
+            <li><strong>Lock the JSON schema</strong> so 3 agents can start at 1:00 PM without negotiating types.</li>
+          </ul>
+          <h5>Tomorrow · 4 hours · three parallel agents</h5>
+          <div class="grid g3">
+            <div class="card"><span class="kicker">Agent 1 · Canvas</span><h4>PDF.js + highlight mapper</h4><p>Render pages, cache chunks, map verbatim → bbox, pulse + scroll.</p></div>
+            <div class="card"><span class="kicker">Agent 2 · Brain</span><h4>PII shield + Claude auditor</h4><p>Local masking, prompt assembly, schema validation, scoring.</p></div>
+            <div class="card"><span class="kicker">Agent 3 · Deck</span><h4>Risk deck + voice + WhatsApp</h4><p>Score dial, pillars, language bar, TTS sync, clause cards.</p></div>
+          </div>
+          <h5>Hour-by-hour</h5>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Time</th><th>Milestone</th><th>Definition of done</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">1:00–1:30</td><td>Scaffold + tokens + presets</td><td>App shell renders, PDF page 1 visible</td></tr>
+                <tr><td class="mono">1:30–2:30</td><td>PII + Claude + JSON validated</td><td>Console shows a valid contract JSON</td></tr>
+                <tr><td class="mono">2:30–3:30</td><td>Highlight mapper</td><td>4 boxes land on right paragraphs</td></tr>
+                <tr><td class="mono">3:30–4:15</td><td>Risk deck + bars</td><td>Score 42, 5 pillars rendering</td></tr>
+                <tr><td class="mono">4:15–4:45</td><td>Sarvam voice + sync</td><td>Kannada audio plays, box pulses</td></tr>
+                <tr><td class="mono">4:45–5:00</td><td>Fallbacks + rehearsal</td><td>Offline path tested; 15s script rehearsed</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc" id="later">
+        <summary><span class="acc-num">13</span> Parked ideas — v2 backlog (deliberately not built)</summary>
+        <div class="acc-body">
+          <div class="grid g2">
+            <div class="card"><h4>Docusign e-sign hand-off</h4><p>"Fix the clause, then sign" — direct sponsor hook.</p></div>
+            <div class="card"><h4>Photo capture → OCR</h4><p>Most Indian contracts are signed on paper.</p></div>
+            <div class="card"><h4>WhatsApp bot</h4><p>Send a PDF, get the X-ray card back. Highest distribution lever.</p></div>
+            <div class="card"><h4>Community clause database</h4><p>Crowd-sourced "landlord X uses this clause".</p></div>
+            <div class="card"><h4>Multi-document diff</h4><p>"Here's the revised agreement — what changed?"</p></div>
+            <div class="card"><h4>Voice-only Q&amp;A</h4><p>"Ask about this clause" — no chat UI, ever.</p></div>
+            <div class="card"><h4>Human lawyer review</h4><p>₹299 marketplace escalation for red clauses.</p></div>
+            <div class="card"><h4>Browser extension</h4><p>X-ray any contract PDF in Chrome.</p></div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKS VIEW -->
+<section id="view-mocks" hidden>
+  <div class="section-head">
+    <h2>Screen mocks — 3–4 variants per stage, slider, copy HTML</h2>
+    <p>Each stage ships with 3–4 variants (different documents and edge states). Slide between mobile and desktop, click clause cards to pulse the PDF, and copy a clean self-contained HTML snippet for any LLM.</p>
+  </div>
+
+  <div class="mocks-toolbar">
+    <span class="hint">Switch variants with the pills under each mock</span>
+    <span class="hint">Slide between mobile ⇄ desktop</span>
+    <span class="hint">Copy HTML inside each card</span>
+  </div>
+
+  <details class="data-panel" id="dataPanel">
+    <summary>🔍 Inspect all documents (rental · loan · offer · clean rental)</summary>
+    <div class="data-bar">
+      <button class="btn" id="copyData">Copy all JSON</button>
+      <span class="dim" style="font-size:12px;align-self:center">4 documents · 14 clauses · 20 pillars · 4 voice scripts</span>
+    </div>
+    <pre class="code" id="dataCode"></pre>
+  </details>
+
+  <div class="legend">
+    <span><i style="background:var(--red)"></i> Red — predatory</span>
+    <span><i style="background:var(--amber)"></i> Amber — negotiate</span>
+    <span><i style="background:var(--green)"></i> Green — fair / standard</span>
+    <span><i style="background:var(--accent)"></i> Accent — action</span>
+  </div>
+
+  <div id="mockHost"></div>
+</section>
+
+</main>
+
+<script>
+/* ============================================================
+   1. THEME
+   ============================================================ */
+(function(){
+  var root = document.documentElement;
+  var saved = null;
+  try { saved = localStorage.getItem('sc-theme'); } catch(e){}
+  if (saved) root.setAttribute('data-theme', saved);
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('sc-theme', next); } catch(e){}
+  });
+})();
+
+/* ============================================================
+   2. VIEW SWITCHING
+   ============================================================ */
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var views = { cheat: document.getElementById('view-cheat'), mocks: document.getElementById('view-mocks') };
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active');
+      var v = t.dataset.view;
+      Object.keys(views).forEach(function(k){ views[k].hidden = (k !== v); });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+})();
+
+/* ============================================================
+   3. CHEAT SHEET — filter, expand/collapse, scroll-spy
+   ============================================================ */
+(function(){
+  var details = Array.prototype.slice.call(document.querySelectorAll('details.acc'));
+  var filter = document.getElementById('csFilter');
+  var noRes = document.getElementById('noRes');
+  filter.addEventListener('input', function(){
+    var q = filter.value.trim().toLowerCase();
+    var hits = 0;
+    details.forEach(function(d){
+      var match = !q || d.textContent.toLowerCase().indexOf(q) > -1;
+      d.hidden = !match;
+      if (match) { hits++; if (q) d.open = true; }
+    });
+    noRes.style.display = (hits === 0) ? 'block' : 'none';
+  });
+  document.getElementById('expandAll').addEventListener('click', function(){
+    details.forEach(function(d){ if (!d.hidden) d.open = true; });
+  });
+  document.getElementById('collapseAll').addEventListener('click', function(){
+    details.forEach(function(d){ d.open = false; });
+  });
+  var links = Array.prototype.slice.call(document.querySelectorAll('#rail a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          links.forEach(function(l){ l.classList.remove('on'); });
+          var a = map[en.target.id];
+          if (a) a.classList.add('on');
+        }
+      });
+    }, { rootMargin: '-90px 0px -65% 0px', threshold: 0 });
+    details.forEach(function(d){ obs.observe(d); });
+  }
+})();
+
+/* ============================================================
+   4. COPY BUTTONS (cheat sheet code blocks)
+   ============================================================ */
+document.addEventListener('click', function(e){
+  var b = e.target.closest('.copy');
+  if (!b) return;
+  var wrap = b.closest('.code-wrap');
+  var code = wrap ? wrap.querySelector('.code') : null;
+  if (!code) return;
+  var txt = code.innerText;
+  var done = function(){
+    var old = b.textContent;
+    b.textContent = 'Copied ✓';
+    setTimeout(function(){ b.textContent = old; }, 1200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done, function(){});
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch(err){}
+    document.body.removeChild(ta);
+  }
+});
+
+/* ============================================================
+   5. MOCKS — data, renderer, variants, slider, snippet
+   ============================================================ */
+(function(){
+
+  /* ---------- DATA: 4 documents ---------- */
+  var DATA = {
+    rental: {
+      docTitle: 'Leave and License Agreement',
+      fileName: 'Bengaluru Rental Agreement.pdf',
+      pages: 4, overall: 42, verdict: 'Sign with caution', verdictKey: 'caution',
+      maskedCount: 6, maskedItems: ['2 Names','2 Addresses','Aadhaar','PAN','Phone','Email'],
+      clauses: [
+        { id:'R1', sev:'red', page:2, title:'Painting charge — flat one month',
+          verbatim:"The Tenant shall pay painting charges equal to one month's rent at the time of vacating the premises, irrespective of the condition of the walls.",
+          plain:'You lose a full month\u2019s rent to painting when you leave, whatever the condition.',
+          benchmark:'Normal: actual receipted cost, typically \u20B93,000\u2013\u20B98,000.',
+          question:'Can we change painting to actual receipted cost, capped at \u20B98,000?' },
+        { id:'A1', sev:'amber', page:2, title:'Unilateral 15% escalation',
+          verbatim:'The Licensor may increase the monthly rent by 15% at any time at his sole discretion.',
+          plain:'The landlord can raise your rent 15% any time, alone, without notice.',
+          benchmark:'Normal: 5\u201310% annual escalation, stated upfront.',
+          question:'Can we fix escalation at 8% once a year with 60 days\u2019 written notice?' },
+        { id:'R2', sev:'red', page:2, title:'11-month lock-in — full deposit forfeiture',
+          verbatim:'The lock-in period shall be eleven (11) months and the Tenant shall forfeit the entire security deposit on early termination.',
+          plain:'Leave before 11 months and you lose your entire \u20B996,000 deposit.',
+          benchmark:'Normal: 1\u20136 month lock-in, deposit returned pro-rated.',
+          question:'Can we make the lock-in 6 months and return the deposit pro-rated if I leave early?' },
+        { id:'G1', sev:'green', page:2, title:'Two-month mutual notice',
+          verbatim:'Notice period for either Party shall be two (2) months in writing.',
+          plain:'Both sides need to give two months\u2019 written notice. That is fair.',
+          benchmark:'Normal: 1\u20132 months, mutual.', question:null }
+      ],
+      pillars: [
+        { label:'Financial Traps', score:35 },
+        { label:'Lock-in & Exit', score:28 },
+        { label:'Unilateral Rights', score:45 },
+        { label:'Hidden Penalties', score:50 },
+        { label:'Dispute Fairness', score:70 }
+      ],
+      voice: { lang:'\u0C95\u0CA8\u0CCD\u0CA8\u0CA1', native:'\u0C92\u0C82\u0CA6\u0CC1 \u0CA4\u0CBF\u0C82\u0C97\u0CB3 \u0CAC\u0CBE\u0CA1\u0CBF\u0C97\u0CC6 \u0CAE\u0CCA\u0CA4\u0CCD\u0CA4\u0CA8\u0CCD\u0CA8\u0CC1 \u0CAC\u0CA3\u0CCD\u0CA3\u0CA6 \u0CB6\u0CC1\u0CB2\u0CCD\u0C95 \u0C8E\u0C82\u0CA6\u0CC1 \u0C95\u0CA1\u0CBF\u0CA4 \u0CAE\u0CBE\u0CA1\u0CB2\u0CBE\u0C97\u0CC1\u0CA4\u0CCD\u0CA4\u0CA6\u0CC6...', en:'One month\u2019s rent is deducted as painting charges...' }
+    },
+    loan: {
+      docTitle: 'Personal Loan Agreement',
+      fileName: 'Instant Personal Loan.pdf',
+      pages: 2, overall: 28, verdict: 'Do not sign', verdictKey: 'danger',
+      maskedCount: 8, maskedItems: ['2 Names','Aadhaar','PAN','Phone','Email','Bank account','Address','Employment ID'],
+      clauses: [
+        { id:'R1', sev:'red', page:1, title:'8% foreclosure penalty',
+          verbatim:'In the event of prepayment or foreclosure, the Borrower shall pay a foreclosure charge of 8% of the outstanding principal amount.',
+          plain:'If you pay off the loan early, you owe 8% of the remaining balance as a penalty.',
+          benchmark:'RBI: no foreclosure charges on floating-rate personal loans to individuals.',
+          question:'Can you remove the foreclosure penalty? RBI treats this as unfair for individual borrowers.' },
+        { id:'R2', sev:'red', page:1, title:'4% bounce charge + GST',
+          verbatim:'A bounce charge of 4% of the EMI amount plus applicable GST shall be levied on each failed auto-debit attempt.',
+          plain:'Every failed EMI costs you 4% of the EMI plus GST.',
+          benchmark:'Normal: \u20B9500\u2013\u20B91,000 flat; 4% is aggressive.',
+          question:'Can we cap the bounce charge at \u20B9500 flat, as per RBI guidance on penal charges?' },
+        { id:'A1', sev:'amber', page:1, title:'Auto-debit mandate — 30-day notice',
+          verbatim:'The Borrower authorises the Lender to modify the auto-debit mandate amount with 30 days\u2019 written notice.',
+          plain:'They can increase your auto-debit with just 30 days\u2019 notice.',
+          benchmark:'RBI: e-mandate requires explicit re-authorisation for any increase.',
+          question:'Can we require my explicit re-authorisation for any mandate increase?' },
+        { id:'G1', sev:'green', page:1, title:'3-day cooling-off period',
+          verbatim:'The Borrower shall have a cooling-off period of three (3) days from disbursement to exit the loan without penalty.',
+          plain:'You get 3 days to cancel the loan and return the money, no questions asked.',
+          benchmark:'RBI Digital Lending: mandatory cooling-off period.', question:null }
+      ],
+      pillars: [
+        { label:'Financial Traps', score:15 },
+        { label:'Lock-in & Exit', score:40 },
+        { label:'Unilateral Rights', score:30 },
+        { label:'Hidden Penalties', score:20 },
+        { label:'Dispute Fairness', score:55 }
+      ],
+      voice: { lang:'\u0939\u093F\u0928\u094D\u0926\u0940', native:'\u0906\u092A\u0915\u0947 \u090A\u092A\u0930 8% foreclosure penalty \u0939\u0948, \u091C\u094B RBI \u0928\u093F\u092F\u092E\u094B\u0902 \u0938\u0947 \u091C\u094D\u092F\u093E\u0926\u093E \u0939\u0948...', en:'You have an 8% foreclosure penalty, which exceeds RBI rules...' }
+    },
+    offer: {
+      docTitle: 'Offer Letter',
+      fileName: 'Startup Offer Letter.pdf',
+      pages: 2, overall: 61, verdict: 'Sign with caution', verdictKey: 'caution',
+      maskedCount: 4, maskedItems: ['Name','PAN','Phone','Address'],
+      clauses: [
+        { id:'A1', sev:'amber', page:2, title:'12-month training bond at \u20B93L',
+          verbatim:'The Employee shall be bound for a period of twelve (12) months and shall pay a training bond of \u20B93,00,000 on early exit.',
+          plain:'Leave within a year and you owe \u20B93 lakh as a training bond.',
+          benchmark:'Training bonds must reflect actual training cost, not a salary multiple.',
+          question:'Can we cap the bond at the actual training cost with receipts?' },
+        { id:'A2', sev:'amber', page:2, title:'90-day notice period',
+          verbatim:'The Employee shall serve a notice period of ninety (90) days upon resignation.',
+          plain:'You must give 90 days\u2019 notice before leaving.',
+          benchmark:'Normal: 30\u201360 days. 90 is long but common in senior tech.',
+          question:'Can we make it 60 days mutual notice?' },
+        { id:'G1', sev:'green', page:1, title:'IP assignment — work only',
+          verbatim:'Intellectual property created in the course of employment shall be assigned to the Company, with personal projects excluded.',
+          plain:'Only work you create at the job belongs to them. Your side projects are yours.',
+          benchmark:'Fair: scoped to work done for the employer.', question:null }
+      ],
+      pillars: [
+        { label:'Financial Traps', score:55 },
+        { label:'Lock-in & Exit', score:40 },
+        { label:'Unilateral Rights', score:70 },
+        { label:'Hidden Penalties', score:65 },
+        { label:'Dispute Fairness', score:75 }
+      ],
+      voice: { lang:'\u0BA4\u0BAE\u0BBF\u0BB4\u0BCD', native:'12 \u0BAE\u0BBE\u0BA4 training bond \u20B93 \u0BB2\u0B9F\u0BCD\u0B9A\u0BA4\u0BCD\u0BA4\u0BC1\u0B95\u0BCD\u0B95\u0BC1, \u0B87\u0BA4\u0BC1 \u0B9A\u0BB0\u0BBE\u0B9A\u0BB0\u0BBF\u0BAF\u0BC8 \u0BB5\u0BBF\u0B9F \u0B85\u0BA4\u0BBF\u0B95\u0BAE\u0BCD...', en:'A 12-month training bond for \u20B93 lakh is above standard...' }
+    },
+    cleanRental: {
+      docTitle: 'Leave and License Agreement',
+      fileName: 'Clean Rental Agreement.pdf',
+      pages: 3, overall: 88, verdict: 'Safe to sign', verdictKey: 'safe',
+      maskedCount: 5, maskedItems: ['2 Names','Aadhaar','Phone','Email','Address'],
+      clauses: [
+        { id:'G1', sev:'green', page:1, title:'2-month mutual notice',
+          verbatim:'Either Party may terminate this Agreement by providing two (2) months\u2019 written notice.',
+          plain:'Both sides need 2 months\u2019 notice. Standard and fair.',
+          benchmark:'Normal: 1\u20132 months, mutual.', question:null },
+        { id:'G2', sev:'green', page:1, title:'2-month deposit, 30-day refund',
+          verbatim:'The Licensee shall pay a security deposit of two (2) months\u2019 rent, refunded within 30 days of vacating.',
+          plain:'2-month deposit, returned within 30 days of moving out.',
+          benchmark:'Bengaluru standard: 2\u20133 months, 30-day refund.', question:null },
+        { id:'G3', sev:'green', page:2, title:'8% annual escalation',
+          verbatim:'The rent shall increase by 8% on each anniversary of this Agreement, with 60 days\u2019 prior written notice.',
+          plain:'Rent goes up 8% once a year, with 60 days\u2019 warning.',
+          benchmark:'Normal: 5\u201310% annual, stated upfront.', question:null }
+      ],
+      pillars: [
+        { label:'Financial Traps', score:90 },
+        { label:'Lock-in & Exit', score:85 },
+        { label:'Unilateral Rights', score:92 },
+        { label:'Hidden Penalties', score:88 },
+        { label:'Dispute Fairness', score:85 }
+      ],
+      voice: { lang:'English', native:'This agreement is balanced. Two-month mutual notice, two-month deposit, eight percent annual escalation. Nothing unusual.', en:'This agreement is balanced. Nothing unusual.' }
+    }
+  };
+
+  /* ---------- STAGES: 3–4 variants each ---------- */
+  var STAGES = [
+    { key:'upload', n:'01', title:'Landing & Preset Pick',
+      sub:'Zero-friction entry. Three realistic Indian documents, no signup, trust signals visible before any upload.',
+      variants:[
+        { id:'preset', name:'Preset picker', doc:'rental' },
+        { id:'drop', name:'Drag & drop active', doc:'rental' },
+        { id:'recent', name:'Returning user · recent files', doc:'rental' }
+      ]
+    },
+    { key:'pii', n:'02', title:'PII Shield Scan',
+      sub:'Identifiers are masked in-browser before a single byte leaves the device. Fail-closed by design.',
+      variants:[
+        { id:'rental', name:'Rental · 6 masked', doc:'rental' },
+        { id:'loan', name:'Loan · 8 masked', doc:'loan' },
+        { id:'offer', name:'Offer · 4 masked', doc:'offer' }
+      ]
+    },
+    { key:'analyze', n:'03', title:'X-Ray Analyzing',
+      sub:'Progressive clause discovery. The room watches the machine work instead of staring at a spinner.',
+      variants:[
+        { id:'rental', name:'Rental · clause sweep', doc:'rental' },
+        { id:'loan', name:'Loan · high-risk scan', doc:'loan' },
+        { id:'ocr', name:'OCR mode · paper contract', doc:'offer' }
+      ]
+    },
+    { key:'results', n:'04', title:'X-Ray Results',
+      sub:'60/40 split: document canvas on the left, risk & action deck on the right.',
+      variants:[
+        { id:'rental', name:'Rental · 42 caution', doc:'rental' },
+        { id:'loan', name:'Loan · 28 danger', doc:'loan' },
+        { id:'offer', name:'Offer · 61 caution', doc:'offer' },
+        { id:'clean', name:'Clean rental · 88 safe', doc:'cleanRental' }
+      ]
+    },
+    { key:'voice', n:'05', title:'Regional Voice Walkthrough',
+      sub:'Regional narration synced to the pulsing clause box. The emotional peak of the demo.',
+      variants:[
+        { id:'kannada', name:'Kannada · rental', doc:'rental' },
+        { id:'hindi', name:'Hindi · loan', doc:'loan' },
+        { id:'tamil', name:'Tamil · offer', doc:'offer' }
+      ]
+    },
+    { key:'negotiate', n:'06', title:'Negotiate & Export',
+      sub:'A WhatsApp-ready counter-message per clause, plus a shareable safety card.',
+      variants:[
+        { id:'rental', name:'Rental · painting clause', doc:'rental' },
+        { id:'loan', name:'Loan · foreclosure', doc:'loan' },
+        { id:'offer', name:'Offer · bond', doc:'offer' }
+      ]
+    }
+  ];
+
+  var SEV_COLOR = { red:'var(--red)', amber:'var(--amber)', green:'var(--green)' };
+  var PILLAR_COLORS = ['var(--red)','var(--red)','var(--amber)','var(--amber)','var(--green)'];
+
+  /* ---------- helpers ---------- */
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function lines(n, seed){ var out=''; for (var i=0;i<n;i++){ var w=55+((i*17+(seed||0)*7)%45); out+='<div class="ln" style="width:'+w+'%"></div>'; } return out; }
+  function waveBars(){ var h=''; for (var i=0;i<26;i++){ h+='<i style="height:'+(25+((i*37)%70))+'%;animation-delay:'+(i*0.07).toFixed(2)+'s"></i>'; } return h; }
+  function preset(icon, title, sub){ return '<div class="preset" style="margin-bottom:5px"><div class="ico">'+icon+'</div><div><b>'+title+'</b><span>'+sub+'</span></div></div>'; }
+  function mb(label, val, color){ return '<div class="mb"><span>'+label+'</span><b style="font-family:var(--mono)">'+val+'</b><i><u style="width:'+val+'%;background:'+color+'"></u></i></div>'; }
+  function copyText(txt, btn, restore){
+    var done = function(){ btn.textContent='Copied \u2713'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent=restore; btn.classList.remove('copied'); }, 1200); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function(){});
+    else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(ta); }
+  }
+
+  /* ---------- CLAUSE rendering ---------- */
+  function hl(sev, id, text, state){
+    var k = 'hl ' + sev;
+    if (state === 'off') k += ' off';
+    if (state === 'on') k += ' on';
+    if (state === 'pulse') k += ' pulse';
+    return '<div class="'+k+'" data-clause="'+id+'"><span class="hl-tag">'+id+'</span>'+esc(text)+'</div>';
+  }
+  function clauseBlock(label, inner){ return '<div class="clause-block"><div class="cl-num">'+label+'</div>'+inner+'</div>'; }
+
+  function clauseCard(c){
+    var q = c.question ? '<div class="btn-row" style="margin-top:6px"><span class="mbtn ghost" data-copy="'+c.id+'">Copy question</span></div>' : '';
+    return '<div class="clause '+c.sev+'" data-clause="'+c.id+'">'
+      + '<div class="ct"><span class="pill '+c.sev+'" style="font-size:8px;padding:1px 6px">'+c.id+'</span>'+esc(c.title)+'</div>'
+      + '<p>'+esc(c.plain)+'</p>'
+      + '<div class="bm">\uD83C\uDDEE\uD83C\uDDF3 '+esc(c.benchmark)+'</div>'
+      + q + '</div>';
+  }
+
+  /* ---------- TOP BAR (desktop) ---------- */
+  function appTop(doc, stage){
+    var pill = '';
+    if (stage === 'pii') pill = '<span class="mini-pill" style="background:var(--amber-bg);color:var(--amber);border-color:var(--amber)">\u23F0 Scanning locally\u2026</span>';
+    else if (stage !== 'upload') pill = '<span class="mini-pill">\uD83D\uDD12 '+doc.maskedCount+' identifiers masked</span>';
+    var activeLang = stage === 'voice' ? (doc.voice.lang.indexOf('\\u') > -1 ? doc.voice.lang : doc.voice.lang.substring(0,2)) : 'EN';
+    if (stage === 'voice') {
+      activeLang = doc.voice.lang === '\u0C95\u0CA8\u0CCD\u0CA8\u0CA1' ? '\u0C95' : doc.voice.lang === '\u0939\u093F\u0928\u094D\u0926\u0940' ? '\u0939\u093F' : doc.voice.lang === '\u0BA4\u0BAE\u0BBF\u0BB4\u0BCD' ? '\u0BA4' : 'EN';
+    }
+    var langs = '<div class="lang-chips">'
+      + '<i class="' + (activeLang === 'EN' ? 'on' : '') + '">EN</i>'
+      + '<i class="' + (activeLang === '\u0939\u093F' ? 'on' : '') + '">\u0939\u093F</i>'
+      + '<i class="' + (activeLang === '\u0C95' ? 'on' : '') + '">\u0C95</i>'
+      + '<i class="' + (activeLang === '\u0BA4' ? 'on' : '') + '">\u0BA4</i></div>';
+    return '<div class="app-top">'
+      + '<div class="doc-pill"><span class="ic">\u25A4</span> '+esc(doc.fileName)+'</div>'
+      + '<div class="spacer"></div>' + pill + langs + '</div>';
+  }
+
+  /* ---------- SHARED deck pieces ---------- */
+  function scoreBlock(doc){
+    var color = doc.verdictKey === 'safe' ? 'var(--green)' : doc.verdictKey === 'danger' ? 'var(--red)' : 'var(--amber)';
+    return '<div class="dcard"><h6>Signing Safety Score</h6>'
+      + '<div class="score-row"><div class="dial" style="--p:'+doc.overall+';--c:'+color+'"><b>'+doc.overall+'</b></div>'
+      + '<div class="score-meta"><b>'+esc(doc.verdict)+'</b><span>'+doc.clauses.filter(function(c){return c.sev!=='green';}).length+' flags</span></div></div></div>';
+  }
+  function pillarBlock(doc){
+    var h = '<div class="dcard"><h6>5-Pillar Risk Radar</h6><div class="mini-bars">';
+    doc.pillars.forEach(function(p,i){ h += mb(p.label, p.score, PILLAR_COLORS[i]); });
+    h += '</div></div>'; return h;
+  }
+  function langBlock(active){
+    var langs = [['EN','English'],['\u0939\u093F','\u0939\u093F\u0928\u094D\u0926\u0940'],['\u0C95','\u0C95\u0CA8\u0CCD\u0CA8\u0CA1'],['\u0BA4','\u0BA4\u0BAE\u0BBF\u0BB4\u0BCD']];
+    var h = '<div class="dcard"><h6>Language &amp; Voice</h6><div class="btn-row" style="margin-bottom:6px">';
+    langs.forEach(function(l){ h += '<span class="mbtn '+(l[0]===active?'primary':'')+'">'+l[0]+'</span>'; });
+    h += '</div><div class="mbtn primary" style="display:block">\u25B6 Walk me through the traps \u00B7 60s</div></div>';
+    return h;
+  }
+  function voicePlayer(doc){
+    return '<div class="dcard"><h6>Playing \u00B7 '+esc(doc.voice.lang)+'</h6>'
+      + '<div class="wave" data-wave>'+waveBars()+'</div>'
+      + '<div class="kn" style="margin-top:7px">"' + esc(doc.voice.native) + '"</div>'
+      + '<div style="font-size:8.5px;color:var(--txt3);margin-top:5px">"' + esc(doc.voice.en) + '"</div>'
+      + '<button class="mbtn primary" style="width:100%;margin-top:7px" data-play>\u275A\u275A Pause narration</button></div>';
+  }
+  function waCard(doc){
+    var q = doc.clauses.find(function(c){ return c.question; });
+    if (!q) q = doc.clauses[0];
+    return '<div class="dcard"><h6>Send this to your landlord / HR</h6>'
+      + '<div class="wa"><b>WHATSAPP \u00B7 1 TAP</b>' + esc(q.question || 'Nothing to negotiate here — this clause is fair.') + '</div>'
+      + '<div class="btn-row" style="margin-top:7px"><span class="mbtn primary" data-copy-wa>Copy message</span><span class="mbtn ghost">Edit</span></div></div>';
+  }
+
+  /* ---------- CANVAS per stage ---------- */
+  function canvasFor(stage, doc, variantId){
+    if (stage === 'upload') return uploadCanvas(variantId);
+    if (stage === 'pii') return piiCanvas(doc);
+    if (stage === 'analyze') return analyzeCanvas(doc, variantId);
+    if (stage === 'results') return resultsCanvas(doc);
+    if (stage === 'voice') return voiceCanvas(doc);
+    if (stage === 'negotiate') return negotiateCanvas(doc);
+    return '';
+  }
+  function uploadCanvas(variantId){
+    if (variantId === 'drop') {
+      return '<div class="canvas" style="display:grid;place-items:center"><div style="max-width:280px;width:100%">'
+        + '<div class="dropzone hot">'
+        + '<div class="dz-icon">\u2B07</div>'
+        + '<b>Release to X-ray</b>'
+        + '<span>Bengaluru Rental Agreement.pdf · 4 pages · 1.2 MB</span>'
+        + '<div class="dz-file">\u25A4 Bengaluru Rental Agreement.pdf</div>'
+        + '</div>'
+        + '<div style="text-align:center;margin-top:12px;font-size:10px;color:var(--txt3)">Local parsing · nothing leaves your browser until scan completes</div>'
+        + '</div></div>';
+    }
+    if (variantId === 'recent') {
+      return '<div class="canvas" style="display:grid;place-items:center"><div style="max-width:260px;width:100%">'
+        + '<div style="font-size:11px;font-weight:700;color:var(--txt);text-align:center;margin-bottom:10px">\u2728 Welcome back, Aditi</div>'
+        + '<div class="recent-item"><div class="r-ico">\u25A4</div><div><b>Bengaluru Rental.pdf</b><span>2 hours ago</span></div><div class="r-score" style="color:var(--amber)">42</div></div>'
+        + '<div class="recent-item"><div class="r-ico">\u20B9</div><div><b>HDFC Personal Loan.pdf</b><span>yesterday</span></div><div class="r-score" style="color:var(--red)">28</div></div>'
+        + '<div class="recent-item"><div class="r-ico">\u2726</div><div><b>Razorpay Offer.pdf</b><span>3 days ago</span></div><div class="r-score" style="color:var(--amber)">61</div></div>'
+        + '<div style="text-align:center;margin-top:10px;font-size:10px;color:var(--accent);font-weight:600">+ X-ray a new contract</div>'
+        + '</div></div>';
+    }
+    return '<div class="canvas" style="display:grid;place-items:center"><div style="text-align:center;max-width:230px">'
+      + '<div style="font-size:26px;margin-bottom:8px">\u25A4</div>'
+      + '<div style="font-size:11px;font-weight:700;margin-bottom:3px">Drop a contract to X-ray it</div>'
+      + '<div style="font-size:9.5px;color:var(--txt3);line-height:1.5">PDF or photo. Nothing personal leaves your browser.</div>'
+      + '<div style="margin-top:9px;display:inline-block;background:var(--accent);color:#fff;font-size:9.5px;font-weight:700;padding:5px 12px;border-radius:6px">Upload PDF</div>'
+      + '</div></div>';
+  }
+  function piiCanvas(doc){
+    var sample = doc.docTitle === 'Personal Loan Agreement'
+      ? '<p class="pdf-p bold">BETWEEN</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577"><span class="mask-token">[PERSON_1]</span> (Lender), office at <span class="mask-token">[ADDRESS_1]</span>, GSTIN <span class="mask-token">[GSTIN_1]</span>.</div><p class="pdf-p bold" style="margin-top:6px">AND</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577"><span class="mask-token">[PERSON_2]</span> (Borrower), Aadhaar <span class="mask-token">[AADHAAR_1]</span>, PAN <span class="mask-token">[PAN_1]</span>, phone <span class="mask-token">[PHONE_1]</span>, email <span class="mask-token">[EMAIL_1]</span>, bank <span class="mask-token">[ACCOUNT_1]</span>, emp ID <span class="mask-token">[EMPID_1]</span>.</div>'
+      : doc.docTitle === 'Offer Letter'
+        ? '<p class="pdf-p bold">Dear <span class="mask-token">[PERSON_1]</span>,</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577">We are pleased to offer you the role at our Bengaluru office. Your PAN <span class="mask-token">[PAN_1]</span>, phone <span class="mask-token">[PHONE_1]</span>, and address <span class="mask-token">[ADDRESS_1]</span> have been noted for payroll setup.</div>'
+        : '<p class="pdf-p">This Leave and License Agreement is made on this 12th day of March 2025</p><p class="pdf-p bold">BETWEEN</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577"><span class="mask-token">[PERSON_1]</span>, aged about 45, residing at <span class="mask-token">[ADDRESS_1]</span>, hereinafter the "LICENSOR".</div><p class="pdf-p bold" style="margin-top:6px">AND</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577"><span class="mask-token">[PERSON_2]</span>, aged about 27, residing at <span class="mask-token">[ADDRESS_2]</span>, Aadhaar <span class="mask-token">[AADHAAR_1]</span>, PAN <span class="mask-token">[PAN_1]</span>, phone <span class="mask-token">[PHONE_1]</span>, email <span class="mask-token">[EMAIL_1]</span>, hereinafter the "LICENSEE".</div>';
+    return '<div class="canvas"><div class="pg"><div class="pg-head"><b>'+esc(doc.docTitle)+'</b><span>Page 1 / '+doc.pages+'</span></div>' + sample + '<div class="scanline"></div></div></div>';
+  }
+  function analyzeCanvas(doc, variantId){
+    if (variantId === 'ocr') {
+      return '<div class="canvas"><div class="pg"><div class="pg-head"><b>OFFER LETTER (OCR)</b><span>Processing photo</span></div>'
+        + '<div class="ocr-bar"><span>\uD83D\uDCF7 scan.jpg</span><div class="progress"><i></i></div><span>62%</span></div>'
+        + '<div class="ocr-page"></div><div class="ocr-page"></div><div class="ocr-page"></div>'
+        + '<div class="scanline"></div></div></div>';
+    }
+    var h = '<div class="canvas"><div class="pg"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>Page 1 / '+doc.pages+'</span></div>';
+    h += clauseBlock('SCANNING CLAUSES', hl(doc.clauses[0].sev, doc.clauses[0].id, doc.clauses[0].verbatim, 'on'));
+    h += lines(3, 2);
+    h += clauseBlock('', hl(doc.clauses[1].sev, doc.clauses[1].id, doc.clauses[1].verbatim, 'on'));
+    h += lines(2, 3);
+    h += '<div class="scanline"></div></div></div>';
+    return h;
+  }
+  function resultsCanvas(doc){
+    var h = '<div class="canvas"><div class="pg"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>Page 1 / '+doc.pages+'</span></div>';
+    doc.clauses.forEach(function(c, i){
+      h += clauseBlock((i+1)+'. '+c.title.toUpperCase().split(' — ')[0], hl(c.sev, c.id, c.verbatim, 'on'));
+    });
+    h += lines(2, 8) + '</div></div>';
+    return h;
+  }
+  function voiceCanvas(doc){
+    var target = doc.clauses.filter(function(c){ return c.sev !== 'green'; })[0] || doc.clauses[0];
+    var h = '<div class="canvas"><div class="pg"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>Page '+target.page+' / '+doc.pages+'</span></div>';
+    doc.clauses.forEach(function(c){
+      h += clauseBlock(c.id, hl(c.sev, c.id, c.verbatim, c.id === target.id ? 'pulse' : 'on'));
+    });
+    h += '</div></div>';
+    return h;
+  }
+  function negotiateCanvas(doc){
+    var target = doc.clauses.find(function(c){ return c.question; }) || doc.clauses[0];
+    var h = '<div class="canvas"><div class="pg"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>Page '+target.page+' / '+doc.pages+'</span></div>';
+    doc.clauses.forEach(function(c){
+      h += clauseBlock(c.id, hl(c.sev, c.id, c.verbatim, c.id === target.id ? 'pulse' : 'on'));
+    });
+    h += '</div></div>';
+    return h;
+  }
+
+  /* ---------- DECK per stage ---------- */
+  function deckFor(stage, doc, variantId){
+    if (stage === 'upload') {
+      if (variantId === 'drop') {
+        return '<div class="dcard"><h6>Ready to X-ray</h6>'
+          + '<div style="font-size:9.5px;color:var(--txt2);line-height:1.7">'
+          + '\u25B8 File: <b style="color:var(--txt)">Bengaluru Rental Agreement.pdf</b><br>'
+          + '\u25B8 Pages: <b>4</b><br>\u25B8 Size: <b>1.2 MB</b><br>\u25B8 Type: <b>Rental</b><br>\u25B8 Traps expected: <b>~4</b></div></div>'
+          + '<div class="dcard"><h6>Protections</h6>'
+          + '<div style="font-size:9.5px;color:var(--txt2);line-height:1.7">\u2713 Local PII scan first<br>\u2713 Nothing leaves browser<br>\u2713 Verbatim-only quotes</div></div>';
+      }
+      if (variantId === 'recent') {
+        return '<div class="dcard"><h6>Your docs</h6>'
+          + '<div style="font-size:9.5px;color:var(--txt2);line-height:1.9">'
+          + '\u25B8 3 contracts scanned<br>\u25B8 5 flagged clauses<br>\u25B8 2 negotiation messages sent</div></div>'
+          + '<div class="dcard"><h6>Quick actions</h6>'
+          + '<div class="btn-row"><span class="mbtn">New scan</span><span class="mbtn ghost">Filter reds</span></div></div>';
+      }
+      return '<div class="dcard"><h6>Or start with a real preset</h6>'
+        + preset('\u25A4', 'Bengaluru Rental Agreement', '4 pages \u00B7 4 planted traps')
+        + preset('\u20B9', 'Instant Personal Loan', '2 pages \u00B7 hidden penalties')
+        + preset('\u2726', 'Startup Offer Letter', '2 pages \u00B7 bond + IP clause')
+        + '</div><div class="dcard"><h6>Why trust this</h6><div style="font-size:9.5px;color:var(--txt2);line-height:1.6">\u2713 100% in-browser PDF parsing<br>\u2713 PII masked before any API call<br>\u2713 Every quote is verbatim</div></div>';
+    }
+    if (stage === 'pii') {
+      var h = '<div class="dcard"><h6>PII Shield \u00B7 running locally</h6>'
+        + '<div style="font-size:9.5px;color:var(--txt2);line-height:1.9">';
+      doc.maskedItems.forEach(function(item){ h += '<div>\u25B8 '+item+' <b style="color:var(--green)">\u2713</b></div>'; });
+      h += '</div></div>'
+        + '<div class="dcard" style="border-color:var(--green);background:var(--green-bg)">'
+        + '<div style="font-size:10px;font-weight:700;color:var(--green)">\uD83D\uDD12 '+doc.maskedCount+' identifiers masked</div>'
+        + '<div style="font-size:9px;color:var(--txt2);margin-top:3px">Zero personal bytes will leave this browser.</div></div>';
+      return h;
+    }
+    if (stage === 'analyze') {
+      if (variantId === 'ocr') {
+        return '<div class="dcard"><h6>OCR in progress</h6>'
+          + '<div style="font-size:9.5px;color:var(--txt2);margin-bottom:8px">Extracting text from photo\u2026</div>'
+          + '<div class="skel" style="width:100%"></div><div class="skel" style="width:80%"></div><div class="skel" style="width:65%"></div></div>'
+          + '<div class="dcard" style="text-align:center;font-size:9.5px;color:var(--txt3)">First clause detected in ~4s\u2026</div>';
+      }
+      return '<div class="dcard"><h6>X-ray in progress</h6>'
+        + '<div style="font-size:9.5px;color:var(--txt2);margin-bottom:8px">Reading clauses against 15 Indian norms\u2026</div>'
+        + '<div class="skel" style="width:100%"></div><div class="skel" style="width:85%"></div><div class="skel" style="width:70%"></div><div class="skel" style="width:92%"></div></div>'
+        + clauseCard(doc.clauses[0])
+        + '<div class="dcard" style="text-align:center;font-size:9.5px;color:var(--txt3)">+ '+(doc.clauses.length-1)+' more clauses found</div>';
+    }
+    if (stage === 'results') {
+      return scoreBlock(doc) + pillarBlock(doc) + langBlock('EN')
+        + doc.clauses.map(clauseCard).join('');
+    }
+    if (stage === 'voice') return scoreBlock(doc) + voicePlayer(doc)
+      + clauseCard(doc.clauses.filter(function(c){ return c.sev !== 'green'; })[0] || doc.clauses[0]);
+    if (stage === 'negotiate') {
+      return scoreBlock(doc) + waCard(doc)
+        + '<div class="dcard"><h6>Export</h6><div class="btn-row"><span class="mbtn">Share safety card</span><span class="mbtn ghost">PDF report</span></div></div>';
+    }
+    return '';
+  }
+
+  /* ---------- Phone screen content ---------- */
+  function phoneFor(stage, doc, variantId){
+    var h = '<div class="s-top"><b>SignClear</b><span class="dot3">\u22EF</span></div>';
+    if (stage === 'upload') {
+      if (variantId === 'drop') {
+        h += '<div class="s-card" style="text-align:center;padding:20px 12px"><div class="dropzone hot"><div class="dz-icon">\u2B07</div><b>Release to X-ray</b><span>Bengaluru Rental.pdf</span></div></div>';
+      } else if (variantId === 'recent') {
+        h += '<div class="s-title">Welcome back, Aditi</div>';
+        h += '<div class="s-card"><div class="recent-item"><div class="r-ico">\u25A4</div><div><b>Bengaluru Rental.pdf</b><span>2 hours ago</span></div><div class="r-score" style="color:var(--amber)">42</div></div>'
+          + '<div class="recent-item"><div class="r-ico">\u20B9</div><div><b>HDFC Personal Loan.pdf</b><span>yesterday</span></div><div class="r-score" style="color:var(--red)">28</div></div>'
+          + '<div class="recent-item"><div class="r-ico">\u2726</div><div><b>Razorpay Offer.pdf</b><span>3 days ago</span></div><div class="r-score" style="color:var(--amber)">61</div></div></div>';
+        h += '<div class="s-card" style="text-align:center;background:var(--accent);border-color:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:9px">+ X-ray a new contract</div>';
+      } else {
+        h += '<div class="s-card" style="text-align:center;padding:20px 12px"><div style="font-size:24px;margin-bottom:6px">\u25A4</div><div style="font-size:11px;font-weight:700">X-ray a contract</div><div style="font-size:9.5px;color:var(--txt3);margin:4px 0 10px;line-height:1.5">PDF or photo. Nothing personal leaves your browser.</div><div style="background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:7px;border-radius:7px">Upload PDF</div></div>';
+        h += '<div class="s-title">Or pick a preset</div>';
+        h += '<div class="s-card">' + preset('\u25A4','Bengaluru Rental','4 pages \u00B7 4 traps') + preset('\u20B9','Personal Loan','2 pages \u00B7 hidden fees') + preset('\u2726','Offer Letter','2 pages \u00B7 bond + IP') + '</div>';
+      }
+      h += '<div class="s-nav"><i class="on">X-Ray</i><i>History</i><i>Learn</i></div>';
+      return h;
+    }
+    if (stage === 'pii') {
+      h += '<div class="s-title">PII Shield \u00B7 scanning</div>';
+      h += '<div class="s-page"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>1/'+doc.pages+'</span></div>'
+        + '<p class="pdf-p">Between</p><div class="hl" style="background:#EEF1F7;border-color:#A9B3C4;color:#5A6577"><span class="mask-token">[PERSON_1]</span> and <span class="mask-token">[PERSON_2]</span>, Aadhaar <span class="mask-token">[AADHAAR_1]</span>.</div><div class="scanline"></div></div>';
+      h += '<div class="s-card" style="border-color:var(--green);background:var(--green-bg)"><div style="font-size:10px;font-weight:700;color:var(--green)">\uD83D\uDD12 '+doc.maskedCount+' identifiers masked</div><div style="font-size:9px;color:var(--txt2);margin-top:2px">Nothing personal leaves this device.</div></div>';
+      return h;
+    }
+    if (stage === 'analyze') {
+      h += '<div class="s-title">X-ray in progress</div>';
+      if (variantId === 'ocr') {
+        h += '<div class="s-card"><div class="ocr-bar"><span>\uD83D\uDCF7 scan.jpg</span><div class="progress"><i></i></div><span>62%</span></div><div class="ocr-page"></div><div class="ocr-page"></div></div>';
+      } else {
+        h += '<div class="s-page"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>1/'+doc.pages+'</span></div>'
+          + hl(doc.clauses[0].sev, doc.clauses[0].id, doc.clauses[0].verbatim, 'on') + '<div class="scanline"></div></div>';
+        h += '<div class="s-card"><div class="skel"></div><div class="skel" style="width:80%"></div><div class="skel" style="width:65%"></div></div>';
+      }
+      h += '<div class="s-card" style="border-left:3px solid var(--'+doc.clauses[0].sev+');font-size:9.5px;color:var(--txt2)"><b style="color:var(--txt);font-size:10px">'+doc.clauses[0].id+' \u00B7 '+esc(doc.clauses[0].title)+'</b><br>'+esc(doc.clauses[0].plain)+'</div>';
+      return h;
+    }
+    if (stage === 'results') {
+      var color = doc.verdictKey === 'safe' ? 'var(--green)' : doc.verdictKey === 'danger' ? 'var(--red)' : 'var(--amber)';
+      h += '<div class="s-card"><div class="score-row"><div class="dial" style="--p:'+doc.overall+';--c:'+color+';width:56px;height:56px"><b style="font-size:15px">'+doc.overall+'</b></div>'
+        + '<div class="score-meta"><b style="font-size:10.5px">'+esc(doc.verdict)+'</b><span style="font-size:8.5px">'+doc.clauses.filter(function(c){return c.sev!=='green';}).length+' flags</span></div></div>'
+        + '<div class="mini-bars" style="margin-top:8px">'
+        + mb(doc.pillars[0].label.split(' ')[0], doc.pillars[0].score, 'var(--red)')
+        + mb(doc.pillars[1].label.split(' ')[0], doc.pillars[1].score, 'var(--red)')
+        + mb(doc.pillars[2].label.split(' ')[0], doc.pillars[2].score, 'var(--amber)')
+        + '</div></div>';
+      h += '<div class="s-title">Document</div>';
+      h += '<div class="s-page"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>1/'+doc.pages+'</span></div>';
+      doc.clauses.forEach(function(c){ h += hl(c.sev, c.id, c.verbatim, 'on'); });
+      h += '</div>';
+      h += '<div class="s-card" style="border-left:3px solid var(--'+doc.clauses[0].sev+');font-size:9.5px;color:var(--txt2)"><b style="color:var(--txt);font-size:10px">'+doc.clauses[0].id+' \u00B7 '+esc(doc.clauses[0].title)+'</b><br>'+esc(doc.clauses[0].plain)+'</div>';
+      h += '<div class="sticky-voice"><div class="play">\u25B6</div><div style="flex:1">Walk me through the traps<br><span style="font-size:8.5px;color:var(--txt3)">EN \u00B7 \u0939\u093F \u00B7 \u0C95 \u00B7 \u0BA4</span></div></div>';
+      return h;
+    }
+    if (stage === 'voice') {
+      h += '<div class="s-title">Playing \u00B7 '+esc(doc.voice.lang)+'</div>';
+      h += '<div class="s-card"><div class="wave" data-wave>'+waveBars()+'</div><div class="kn" style="margin-top:7px;font-size:9.5px">"'+esc(doc.voice.native)+'"</div></div>';
+      h += '<div class="s-page"><div class="pg-head"><b>'+esc(doc.docTitle).toUpperCase()+'</b><span>'+doc.pages+'</span></div>';
+      doc.clauses.forEach(function(c){ h += hl(c.sev, c.id, c.verbatim, c.sev==='green' ? 'on' : 'pulse'); });
+      h += '</div>';
+      h += '<div class="sticky-voice"><div class="play" data-play>\u275A\u275A</div><div style="flex:1">Pause \u00B7 00:18 / 00:60</div></div>';
+      return h;
+    }
+    if (stage === 'negotiate') {
+      var q = doc.clauses.find(function(c){ return c.question; }) || doc.clauses[0];
+      h += '<div class="s-title">Negotiate</div>';
+      h += '<div class="s-card"><div class="wa" style="font-size:9px"><b>WHATSAPP \u00B7 1 TAP</b>' + esc(q.question || 'Nothing to negotiate.') + '</div><div style="background:var(--accent);color:#fff;text-align:center;font-size:9.5px;font-weight:700;padding:6px;border-radius:6px;margin-top:7px" data-copy-wa>Copy message</div></div>';
+      h += '<div class="s-card"><div class="mini-bars">' + mb(doc.pillars[0].label.split(' ')[0], doc.pillars[0].score, 'var(--red)') + mb(doc.pillars[1].label.split(' ')[0], doc.pillars[1].score, 'var(--red)') + '</div></div>';
+      h += '<div class="s-card" style="display:flex;gap:7px"><span class="mbtn">Share safety card</span><span class="mbtn ghost">PDF report</span></div>';
+      h += '<div class="s-nav"><i class="on">X-Ray</i><i>History</i><i>Learn</i></div>';
+      return h;
+    }
+    return h;
+  }
+
+  /* ---------- Full desktop / mobile renderers ---------- */
+  function renderDesktop(stage, doc, variantId){
+    return '<div class="browser">'
+      + '<div class="browser-bar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span>'
+      + '<span class="url">signclear.app/xray/'+doc.fileName.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-')+'</span></div>'
+      + '<div class="app">' + appTop(doc, stage) + canvasFor(stage, doc, variantId) + '<aside class="deck">' + deckFor(stage, doc, variantId) + '</aside></div>'
+      + '</div>';
+  }
+  function renderMobile(stage, doc, variantId){
+    return '<div class="phone"><div class="notch"><i></i></div><div class="screen">' + phoneFor(stage, doc, variantId) + '</div></div>';
+  }
+
+  /* ---------- Snippet generator (clean HTML for LLM) ---------- */
+  function generateSnippet(card){
+    var stage = card.dataset.stage;
+    var variantId = card.dataset.activeVariant;
+    var docKey = card.dataset.activeDoc;
+    var view = card.dataset.view || 'desktop';
+    var doc = DATA[docKey];
+    var html;
+    if (view === 'desktop') {
+      html = '<div class="app">' + appTop(doc, stage) + canvasFor(stage, doc, variantId) + '<aside class="deck">' + deckFor(stage, doc, variantId) + '</aside></div>';
+    } else {
+      html = phoneFor(stage, doc, variantId);
+    }
+    var MINI = ':root{--bg:#0A0C10;--bg2:#0D1016;--panel:#12161E;--panel2:#171C26;--line:#232A36;--txt:#E6EAF2;--txt2:#9AA5B8;--txt3:#6B7688;--accent:#5B8CFF;--red:#FF5A5F;--amber:#FFB020;--green:#2ED47A;--red-bg:rgba(255,90,95,.12);--amber-bg:rgba(255,176,32,.12);--green-bg:rgba(46,212,122,.12);--accent-bg:rgba(91,140,255,.12);--font:"Inter",system-ui,sans-serif;--mono:ui-monospace,monospace}'
+      + 'body{margin:0;padding:24px;background:var(--bg);color:var(--txt);font-family:var(--font);font-size:13px}'
+      + '.app{display:grid;grid-template-columns:58% 42%;max-width:820px;margin:0 auto;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg2);font-size:11px}'
+      + '.app-top{grid-column:1/-1;display:flex;gap:7px;padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel)}'
+      + '.doc-pill{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600}'
+      + '.spacer{flex:1}.mini-pill{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--green-bg);color:var(--green)}'
+      + '.lang-chips{display:flex;gap:3px}.lang-chips i{font-style:normal;font-size:9.5px;font-weight:700;padding:3px 7px;border-radius:6px;background:var(--panel2);color:var(--txt3)}.lang-chips i.on{background:var(--accent);color:#fff}'
+      + '.canvas{padding:14px;background:var(--bg);border-right:1px solid var(--line);min-height:340px}'
+      + '.pg{background:#fff;color:#0B0F18;border-radius:8px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.28)}'
+      + '.pg-head{display:flex;justify-content:space-between;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #E6E9EF;font-size:9.5px;font-weight:700;letter-spacing:.11em;color:#3C465A}'
+      + '.cl-num{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5A6577;margin:7px 0 3px}'
+      + '.hl{border-radius:5px;padding:5px 7px;margin:7px 0;font-size:9px;line-height:1.45;border-left:3px solid;position:relative}'
+      + '.hl.red{background:#FFE9EA;border-color:#E03134;color:#7A1416}.hl.amber{background:#FFF6E2;border-color:#C98A00;color:#6B4A00}.hl.green{background:#E8F8EF;border-color:#12894B;color:#0B5530}'
+      + '.hl-tag{position:absolute;top:-6px;right:-4px;font-family:var(--mono);font-size:7px;font-weight:700;color:#fff;padding:1px 4px;border-radius:4px;background:currentColor}'
+      + '.deck{padding:13px;background:var(--panel);display:flex;flex-direction:column;gap:11px}'
+      + '.dcard{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}'
+      + '.dcard h6{margin:0 0 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);font-weight:700}'
+      + '.score-row{display:flex;align-items:center;gap:12px}'
+      + '.dial{width:70px;height:70px;border-radius:50%;background:conic-gradient(var(--amber) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;position:relative}'
+      + '.dial::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel2)}.dial b{position:relative;font-size:19px}'
+      + '.mb{display:grid;grid-template-columns:1fr auto;gap:4px;font-size:9.5px;color:var(--txt2);align-items:center;margin-bottom:5px}'
+      + '.mb i{display:block;height:4px;border-radius:2px;grid-column:1/-1;background:var(--line);overflow:hidden}.mb i>u{display:block;height:100%;background:var(--red)}'
+      + '.clause{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:10px;cursor:pointer}'
+      + '.clause.red{border-left:3px solid var(--red)}.clause.amber{border-left:3px solid var(--amber)}.clause.green{border-left:3px solid var(--green)}'
+      + '.clause .ct{font-weight:700;font-size:10px;margin-bottom:4px}.clause p{margin:0 0 4px;font-size:9.5px;color:var(--txt2)}'
+      + '.clause .bm{font-size:9px;color:var(--txt3);border-top:1px dashed var(--line);padding-top:5px}'
+      + '.pill{display:inline-block;font-size:8px;padding:1px 6px;border-radius:999px;font-weight:700}'
+      + '.pill.red{background:var(--red-bg);color:var(--red)}.pill.amber{background:var(--amber-bg);color:var(--amber)}.pill.green{background:var(--green-bg);color:var(--green)}'
+      + '.mbtn{display:inline-block;font-size:10px;font-weight:700;padding:7px 8px;border-radius:7px;background:var(--accent);color:#fff;text-align:center}'
+      + '.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.mbtn.ghost{background:transparent;color:var(--txt2);border:1px solid var(--line)}'
+      + '.s-top{display:flex;align-items:center;margin-bottom:9px}.s-title{font-size:9px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;margin:9px 0 5px}'
+      + '.s-card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px;margin-bottom:6px}';
+    return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<title>SignClear · '+esc(doc.docTitle)+' · '+stage+'</title>\n<style>\n'+MINI+'\n</style>\n</head>\n<body>\n<!-- SignClear X-Ray mock: '+stage+' · '+docKey+' · '+view+' -->\n'+html+'\n</body>\n</html>';
+  }
+
+  /* ---------- Render mock cards ---------- */
+  function renderCard(stage){
+    var first = stage.variants[0];
+    var pills = stage.variants.map(function(v, i){
+      return '<button class="variant-pill ' + (i===0?'active':'') + '" data-variant="' + v.id + '">' + v.name + '</button>';
+    }).join('');
+    return '<article class="mock-card" data-stage="'+stage.key+'" data-active-variant="'+first.id+'" data-active-doc="'+first.doc+'" data-view="desktop">'
+      + '<div class="mock-head"><span class="mock-n">'+stage.n+'</span>'
+      + '<div><h3>'+esc(stage.title)+'</h3><p>'+esc(stage.sub)+'</p></div></div>'
+      + '<div class="variant-bar" data-variants>'+pills+'</div>'
+      + '<div class="view-slider">'
+      + '<span class="vs-label vs-mobile">Mobile</span>'
+      + '<input type="range" class="vs-range" min="0" max="1" step="1" value="1" aria-label="Toggle mobile or desktop">'
+      + '<span class="vs-label vs-desktop on">Desktop</span>'
+      + '</div>'
+      + '<div class="preview-area" data-preview data-view="desktop"></div>'
+      + '<details class="snippet-panel">'
+      + '<summary>Copy HTML reference — current variant, current view</summary>'
+      + '<div class="snippet-body">'
+      + '<button class="btn copy-snippet">Copy HTML to clipboard</button>'
+      + '<pre class="code snippet-code">Loading…</pre>'
+      + '</div>'
+      + '</details>'
+      + '</article>';
+  }
+
+  var host = document.getElementById('mockHost');
+  host.innerHTML = STAGES.map(renderCard).join('');
+
+  function refreshPreview(card){
+    var stage = card.dataset.stage;
+    var variantId = card.dataset.activeVariant;
+    var docKey = card.dataset.activeDoc;
+    var view = card.dataset.view || 'desktop';
+    var doc = DATA[docKey];
+    var preview = card.querySelector('[data-preview]');
+    preview.dataset.view = view;
+    preview.innerHTML = (view === 'desktop') ? renderDesktop(stage, doc, variantId) : renderMobile(stage, doc, variantId);
+    var snip = card.querySelector('.snippet-code');
+    if (snip) snip.textContent = generateSnippet(card);
+  }
+
+  // Initial render
+  host.querySelectorAll('.mock-card').forEach(refreshPreview);
+
+  // Data panel
+  var dataCode = document.getElementById('dataCode');
+  if (dataCode) dataCode.textContent = JSON.stringify(DATA, null, 2);
+
+  /* ---------- EVENTS ---------- */
+
+  // Variant pills
+  document.addEventListener('click', function(e){
+    var pill = e.target.closest('.variant-pill');
+    if (!pill) return;
+    var card = pill.closest('.mock-card');
+    if (!card) return;
+    var stage = STAGES.find(function(s){ return s.key === card.dataset.stage; });
+    var variant = stage.variants.find(function(v){ return v.id === pill.dataset.variant; });
+    if (!variant) return;
+    card.querySelectorAll('.variant-pill').forEach(function(p){ p.classList.remove('active'); });
+    pill.classList.add('active');
+    card.dataset.activeVariant = variant.id;
+    card.dataset.activeDoc = variant.doc;
+    refreshPreview(card);
+  });
+
+  // Slider (desktop ↔ mobile)
+  document.addEventListener('input', function(e){
+    if (!e.target.classList.contains('vs-range')) return;
+    var card = e.target.closest('.mock-card');
+    if (!card) return;
+    var view = e.target.value === '1' ? 'desktop' : 'mobile';
+    card.dataset.view = view;
+    var slider = card.querySelector('.view-slider');
+    slider.querySelector('.vs-mobile').classList.toggle('on', view === 'mobile');
+    slider.querySelector('.vs-desktop').classList.toggle('on', view === 'desktop');
+    refreshPreview(card);
+  });
+
+  // Copy snippet
+  document.addEventListener('click', function(e){
+    if (!e.target.classList.contains('copy-snippet')) return;
+    var card = e.target.closest('.mock-card');
+    if (!card) return;
+    var snip = card.querySelector('.snippet-code').textContent;
+    copyText(snip, e.target, 'Copy HTML to clipboard');
+  });
+
+  // Copy all JSON
+  var copyData = document.getElementById('copyData');
+  if (copyData) copyData.addEventListener('click', function(){ copyText(JSON.stringify(DATA, null, 2), copyData, 'Copy all JSON'); });
+
+  // Copy clause question / WhatsApp
+  document.addEventListener('click', function(e){
+    var copyBtn = e.target.closest('[data-copy]');
+    if (copyBtn) {
+      var card = copyBtn.closest('.mock-card');
+      var stage = card ? card.dataset.stage : null;
+      var docKey = card ? card.dataset.activeDoc : null;
+      var doc = DATA[docKey];
+      if (!doc) return;
+      var clause = doc.clauses.find(function(c){ return c.id === copyBtn.dataset.copy; });
+      if (clause && clause.question) copyText(clause.question, copyBtn, 'Copy question');
+      return;
+    }
+    var waBtn = e.target.closest('[data-copy-wa]');
+    if (waBtn) {
+      var card2 = waBtn.closest('.mock-card');
+      var doc2 = DATA[card2 ? card2.dataset.activeDoc : 'rental'];
+      var q = doc2.clauses.find(function(c){ return c.question; }) || doc2.clauses[0];
+      copyText(q.question || 'Nothing to negotiate.', waBtn, 'Copy message');
+      return;
+    }
+  });
+
+  // Play button
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-play]');
+    if (!btn) return;
+    var card = btn.closest('.mock-card');
+    if (!card) return;
+    var wave = card.querySelector('[data-wave]');
+    if (!wave) return;
+    wave.classList.toggle('paused');
+    var paused = wave.classList.contains('paused');
+    if (btn.classList.contains('play')) btn.textContent = paused ? '\u25B6' : '\u275A\u275A';
+    else btn.textContent = paused ? '\u25B6 Play narration' : '\u275A\u275A Pause narration';
+  });
+
+  // Clause card → pulse matching box
+  document.addEventListener('click', function(e){
+    var card = e.target.closest('.clause[data-clause]');
+    if (!card) return;
+    var mock = card.closest('.mock-card');
+    if (!mock) return;
+    var box = mock.querySelector('.hl[data-clause="'+card.dataset.clause+'"]');
+    if (!box) return;
+    box.scrollIntoView({ behavior:'smooth', block:'center' });
+    box.classList.remove('focus-pulse');
+    void box.offsetWidth;
+    box.classList.add('focus-pulse');
+    setTimeout(function(){ box.classList.remove('focus-pulse'); }, 1500);
+  });
+
+  // Language chip
+  document.addEventListener('click', function(e){
+    var chip = e.target.closest('.lang-chips i');
+    if (!chip) return;
+    var mock = chip.closest('.mock-card');
+    if (!mock) return;
+    mock.querySelectorAll('.lang-chips i').forEach(function(c){ c.classList.remove('on'); });
+    chip.classList.add('on');
+  });
+
+})();
+</script>
+</body>
+</html>
