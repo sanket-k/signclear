@@ -304,22 +304,14 @@ td strong{color:var(--txt)}
 .variant-pill:hover{border-color:var(--accent);color:var(--txt)}
 .variant-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
 
-/* View slider */
-.view-slider{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:10px 16px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r)}
-.vs-label{font-size:11.5px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;min-width:64px;transition:.2s;user-select:none}
-.vs-label.on{color:var(--accent)}
-.vs-label.vs-mobile{text-align:left}
-.vs-label.vs-desktop{text-align:right}
-.vs-range{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--line);outline:none;cursor:pointer}
-.vs-range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--panel);box-shadow:0 2px 6px rgba(0,0,0,.3);transition:.15s}
-.vs-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--panel);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+/* View switch — page wide */
+.view-switch{display:flex;gap:6px;margin-bottom:18px;padding:6px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r-lg)}
+.vs-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent;color:var(--txt2);font:inherit;font-size:13.5px;font-weight:700;padding:11px 16px;border-radius:var(--r);cursor:pointer;transition:.18s}
+.vs-btn:hover{color:var(--txt)}
+.vs-btn.active{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(91,140,255,.35)}
 
 /* Preview area */
 .preview-area{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;justify-content:center;align-items:flex-start;min-height:400px;overflow:hidden}
-.preview-area[data-view="mobile"] .preview-desktop{display:none}
-.preview-area[data-view="desktop"] .preview-mobile{display:none}
-.preview-mobile{display:flex;justify-content:center}
-.preview-desktop{width:100%;max-width:820px}
 
 /* Snippet */
 .snippet-panel{margin-top:14px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -798,14 +790,19 @@ verdict = overall ≥ 80 ? "safe" : overall ≥ 50 ? "sign_with_caution" : "do_n
 <!-- MOCKS VIEW -->
 <section id="view-mocks" hidden>
   <div class="section-head">
-    <h2>Screen mocks — 3–4 variants per stage, slider, copy HTML</h2>
-    <p>Each stage ships with 3–4 variants (different documents and edge states). Slide between mobile and desktop, click clause cards to pulse the PDF, and copy a clean self-contained HTML snippet for any LLM.</p>
+    <h2>Screen mocks — 3–4 variants per stage, mobile ⇄ desktop switch, copy HTML</h2>
+    <p>Each stage ships with 3–4 variants (different documents and edge states). Use the full-width switch to flip every mock between mobile and desktop, click clause cards to pulse the PDF, and copy a clean self-contained HTML snippet for any LLM.</p>
   </div>
 
   <div class="mocks-toolbar">
     <span class="hint">Switch variants with the pills under each mock</span>
-    <span class="hint">Slide between mobile ⇄ desktop</span>
+    <span class="hint">Flip all mocks between mobile ⇄ desktop</span>
     <span class="hint">Copy HTML inside each card</span>
+  </div>
+
+  <div class="view-switch" id="viewSwitch" role="group" aria-label="Switch all mocks between mobile and desktop">
+    <button class="vs-btn" data-view-opt="mobile" type="button">Mobile</button>
+    <button class="vs-btn active" data-view-opt="desktop" type="button">Desktop</button>
   </div>
 
   <details class="data-panel" id="dataPanel">
@@ -1446,7 +1443,7 @@ document.addEventListener('click', function(e){
     var stage = card.dataset.stage;
     var variantId = card.dataset.activeVariant;
     var docKey = card.dataset.activeDoc;
-    var view = card.dataset.view || 'desktop';
+    var view = globalView;
     var doc = DATA[docKey];
     var html;
     if (view === 'desktop') {
@@ -1499,11 +1496,6 @@ document.addEventListener('click', function(e){
       + '<div class="mock-head"><span class="mock-n">'+stage.n+'</span>'
       + '<div><h3>'+esc(stage.title)+'</h3><p>'+esc(stage.sub)+'</p></div></div>'
       + '<div class="variant-bar" data-variants>'+pills+'</div>'
-      + '<div class="view-slider">'
-      + '<span class="vs-label vs-mobile">Mobile</span>'
-      + '<input type="range" class="vs-range" min="0" max="1" step="1" value="1" aria-label="Toggle mobile or desktop">'
-      + '<span class="vs-label vs-desktop on">Desktop</span>'
-      + '</div>'
       + '<div class="preview-area" data-preview data-view="desktop"></div>'
       + '<details class="snippet-panel">'
       + '<summary>Copy HTML reference — current variant, current view</summary>'
@@ -1516,13 +1508,14 @@ document.addEventListener('click', function(e){
   }
 
   var host = document.getElementById('mockHost');
+  var globalView = 'desktop';
   host.innerHTML = STAGES.map(renderCard).join('');
 
   function refreshPreview(card){
     var stage = card.dataset.stage;
     var variantId = card.dataset.activeVariant;
     var docKey = card.dataset.activeDoc;
-    var view = card.dataset.view || 'desktop';
+    var view = globalView;
     var doc = DATA[docKey];
     var preview = card.querySelector('[data-preview]');
     preview.dataset.view = view;
@@ -1556,17 +1549,14 @@ document.addEventListener('click', function(e){
     refreshPreview(card);
   });
 
-  // Slider (desktop ↔ mobile)
-  document.addEventListener('input', function(e){
-    if (!e.target.classList.contains('vs-range')) return;
-    var card = e.target.closest('.mock-card');
-    if (!card) return;
-    var view = e.target.value === '1' ? 'desktop' : 'mobile';
-    card.dataset.view = view;
-    var slider = card.querySelector('.view-slider');
-    slider.querySelector('.vs-mobile').classList.toggle('on', view === 'mobile');
-    slider.querySelector('.vs-desktop').classList.toggle('on', view === 'desktop');
-    refreshPreview(card);
+  // Page-wide switch (desktop ↔ mobile)
+  var viewSwitch = document.getElementById('viewSwitch');
+  viewSwitch.addEventListener('click', function(e){
+    var btn = e.target.closest('.vs-btn');
+    if (!btn) return;
+    globalView = btn.dataset.viewOpt;
+    viewSwitch.querySelectorAll('.vs-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    host.querySelectorAll('.mock-card').forEach(refreshPreview);
   });
 
   // Copy snippet
