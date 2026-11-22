@@ -83,7 +83,9 @@ const packs = new Map(
   })
 );
 
-const presetFiles = readdirSync(join(root, "public/presets")).filter((f) => f.endsWith(".json"));
+// `*.audit.json` files are audit_result_v1 fixtures (see docs/preset-audit-fixtures.md), not
+// contract_preset_v1 — they must never enter the preset assertions below.
+const presetFiles = readdirSync(join(root, "public/presets")).filter((f) => f.endsWith(".json") && !f.endsWith(".audit.json"));
 const presets = presetFiles.map((f) => load(`public/presets/${f}`));
 
 test("every rule pack validates against rules/schema.json", () => {
