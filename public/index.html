@@ -5,16 +5,295 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1D4ED8" />
   <meta name="description" content="Understand what you're signing — in your language, in 60 seconds." />
+  <meta name="color-scheme" content="light dark" />
   <title>SignClear — Understand Before You Sign</title>
   <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon.svg" />
   <link rel="stylesheet" href="./styles/tokens.css" />
   <link rel="stylesheet" href="./styles/app.css" />
 </head>
 <body>
-  <main id="app">
-    <h1>SignClear</h1>
-    <p>Know what you're signing — in your language, in 60 seconds.</p>
+  <!-- §1.6 — inline SVG sprite, first child of body. stroke-based, currentColor only. -->
+  <svg aria-hidden="true" class="sprite" width="0" height="0" focusable="false">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.4v13.2L19 12z" /></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9.5 5v14M14.5 5v14" /></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.8" width="6" height="11" rx="3" /><path d="M5.6 11.2a6.4 6.4 0 0 0 12.8 0M12 17.6V21M9.2 21h5.6" /></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.2 2.6 20h18.8z" /><path d="M12 9.2v4.6M12 16.9v.2" /></symbol>
+    <symbol id="i-caution" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" /><path d="M12 7.4v5.4M12 16.1v.2" /></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4.8 12.6 9.6 17.4 19.4 6.8" /></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.1 5.2 5.9v5.8c0 4.1 2.8 7.5 6.8 8.9 4-1.4 6.8-4.8 6.8-8.9V5.9z" /></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.6" y="10.3" width="14.8" height="10.2" rx="2.4" /><path d="M8.4 10.3V7.7a3.6 3.6 0 0 1 7.2 0v2.6" /></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.4 8.6h3.1l1.6-2.5h7.8l1.6 2.5h3.1v10.4H3.4z" /><circle cx="12" cy="13.6" r="3.4" /></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M13.6 3.4H7.2a2.1 2.1 0 0 0-2.1 2.1v13a2.1 2.1 0 0 0 2.1 2.1h9.6a2.1 2.1 0 0 0 2.1-2.1V9z" /><path d="M13.6 3.4V9h5.3" /></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.6" y="8.6" width="11.4" height="11.4" rx="2.1" /><path d="M15.4 5.6H6.4a2.1 2.1 0 0 0-2.1 2.1v9" /></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.4 11.7a8.4 8.4 0 0 1-12.5 7.4L3.6 20.4l1.4-4.2A8.4 8.4 0 1 1 20.4 11.7Z" /><path d="M9.1 9.1c.3-.1.6 0 .8.3l.6 1.2c.1.3 0 .5-.2.7l-.4.4c.4 1 1.2 1.8 2.2 2.2l.4-.4c.2-.2.4-.3.7-.2l1.2.6c.3.2.4.5.3.8-.2.7-.9 1.2-1.6 1.1-2.7-.4-4.8-2.5-5.2-5.2-.1-.7.4-1.4 1.2-1.5Z" /></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.6" width="18" height="12.8" rx="2.4" /><path d="m3.7 7.6 8.3 5.9 8.3-5.9" /></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="6.6" height="6.6" rx="1.2" /><rect x="14" y="3.4" width="6.6" height="6.6" rx="1.2" /><rect x="3.4" y="14" width="6.6" height="6.6" rx="1.2" /><path d="M14 14.2h2.7V17H14zM18 14.2h2.6M14 18.4V21M18.1 18.2h2.5V21" /></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.2 6.2 11.6 11.6M17.8 6.2 6.2 17.8" /></symbol>
+    <symbol id="i-slider" viewBox="0 0 24 24"><path d="M3.4 8.6h17.2M3.4 15.6h17.2" /><circle cx="9" cy="8.6" r="2.3" /><circle cx="15.2" cy="15.6" r="2.3" /></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.4V12l3.2 2" /></symbol>
+    <symbol id="i-rupee" viewBox="0 0 24 24"><path d="M7 4.6h10M7 8.3h10M15.8 4.6c0 3-2.3 4.5-5.3 4.5H7l8.1 10.7" /></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9.4 6 6 6-6 6" /></symbol>
+    <!-- extras (company: theme toggle) — sprite stays a closed set otherwise -->
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.7 5.7l1.7 1.7M16.6 16.6l1.7 1.7M18.3 5.7l-1.7 1.7M7.4 16.6l-1.7 1.7" /></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.4A8.5 8.5 0 0 1 9.6 4 8.5 8.5 0 1 0 20 14.4Z" /></symbol>
+  </svg>
+
+  <header class="app-header">
+    <div class="brand">
+      <svg class="icon brand-icon" aria-hidden="true" focusable="false"><use href="#i-shield" /></svg>
+      <div class="brand-text">
+        <h1 class="brand-name">SignClear</h1>
+        <p class="brand-tag">Clarity, not counsel</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode" data-theme-toggle>
+        <svg class="icon theme-icon-sun" aria-hidden="true" focusable="false"><use href="#i-sun" /></svg>
+        <svg class="icon theme-icon-moon" aria-hidden="true" focusable="false"><use href="#i-moon" /></svg>
+      </button>
+      <button class="qr-open" type="button" aria-label="Mobile QR" data-qr-open>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-qr" /></svg>
+        <span class="qr-open-label">Mobile QR</span>
+      </button>
+      <button class="vault-open" type="button" aria-label="Saved documents" aria-expanded="false" aria-controls="vault-drawer" data-vault-open>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-lock" /></svg>
+      </button>
+    </div>
+
+    <div class="lang-pill" data-lang="kn" role="group" aria-label="Language">
+      <button class="lang-opt" type="button" data-lang-opt="kn" lang="kn" aria-pressed="true">KN</button>
+      <button class="lang-opt" type="button" data-lang-opt="hi" lang="hi" aria-pressed="false">HI</button>
+      <button class="lang-opt" type="button" data-lang-opt="ta" lang="ta" aria-pressed="false">TA</button>
+      <button class="lang-opt" type="button" data-lang-opt="en" lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="app-shell" data-view="feed" data-active-tab="understand" data-offline="false">
+
+      <!-- ─── Intake ─────────────────────────────────────────────────────── -->
+      <section class="intake" data-lane="A" aria-labelledby="intake-title">
+        <div class="intake-head">
+          <h2 class="intake-title" id="intake-title">Start a clause check</h2>
+          <button class="pii-badge" type="button" data-lane="A" data-state="ok" aria-expanded="false" data-pii-badge>
+            <span class="pii-emoji" aria-hidden="true">🟢</span>
+            <span class="pii-text">Local PII Shield</span>
+            <span class="pii-count" data-pii-count>9 tokens</span>
+          </button>
+        </div>
+
+        <div class="pii-popover" data-pii-type="all" hidden>
+          <p class="pii-popover-title">Masked on this device</p>
+          <ul class="pii-types" data-pii-types>
+            <li><span>Aadhaar</span><span>1</span></li>
+          </ul>
+          <p class="pii-popover-note">Cities and states are never masked.</p>
+        </div>
+
+        <label class="drop-zone" for="camera-input">
+          <svg class="icon drop-icon" aria-hidden="true" focusable="false"><use href="#i-camera" /></svg>
+          <span class="drop-title">Photograph the agreement</span>
+          <span class="drop-hint">or drop a PDF. It is read on this device first.</span>
+          <input class="camera-input" id="camera-input" type="file" accept="image/*,application/pdf" capture="environment" data-camera-input />
+        </label>
+
+        <div class="preset-row" role="group" aria-label="Sample agreements">
+          <button class="preset-chip" type="button" data-preset="blr-rental" aria-pressed="true">BLR Rental</button>
+          <button class="preset-chip" type="button" data-preset="rbi-loan" aria-pressed="false">RBI Loan</button>
+          <button class="preset-chip" type="button" data-preset="startup-offer" aria-pressed="false">Startup Offer</button>
+          <button class="preset-chip" type="button" data-preset="missing-page-3" aria-pressed="false">Missing Page 3</button>
+        </div>
+      </section>
+
+      <!-- ─── Live telemetry stepper (§6) ────────────────────────────────── -->
+      <section class="stepper" data-variant="M3" data-state="done" aria-live="polite" aria-busy="false"
+               aria-label="Processing telemetry">
+        <div class="stepper-head">
+          <span class="stepper-title">Run</span>
+          <span class="stepper-status" data-stepper-status>Complete</span>
+          <span class="offline-chip" data-offline-chip>Offline sample</span>
+        </div>
+        <ol class="stepper-steps">
+          <li class="stepper-step" data-stage="scan" data-state="done">
+            <span class="stepper-dot" aria-hidden="true"><svg class="icon"><use href="#i-check" /></svg></span>
+            <span class="stepper-label">Scan</span>
+            <span class="stepper-count" data-count="pages" aria-live="polite">—</span>
+            <span class="stepper-bar" aria-hidden="true"><i></i></span>
+          </li>
+          <li class="stepper-step" data-stage="shield" data-state="done">
+            <span class="stepper-dot" aria-hidden="true"><svg class="icon"><use href="#i-check" /></svg></span>
+            <span class="stepper-label">Shield</span>
+            <span class="stepper-count" data-count="pii" aria-live="polite">—</span>
+            <span class="stepper-bar" aria-hidden="true"><i></i></span>
+          </li>
+          <li class="stepper-step" data-stage="ground" data-state="done">
+            <span class="stepper-dot" aria-hidden="true"><svg class="icon"><use href="#i-check" /></svg></span>
+            <span class="stepper-label">Ground</span>
+            <span class="stepper-count" data-count="findings" aria-live="polite">—</span>
+            <span class="stepper-bar" aria-hidden="true"><i></i></span>
+          </li>
+          <li class="stepper-step" data-stage="speak" data-state="done">
+            <span class="stepper-dot" aria-hidden="true"><svg class="icon"><use href="#i-check" /></svg></span>
+            <span class="stepper-label">Speak</span>
+            <span class="stepper-count" data-count="spoken" aria-live="polite">—</span>
+            <span class="stepper-bar" aria-hidden="true"><i></i></span>
+          </li>
+        </ol>
+        <button class="stepper-cancel" type="button" data-stepper-cancel hidden>Cancel</button>
+      </section>
+
+      <!-- ─── Desktop view switch (§2) ──────────────────────────────────── -->
+      <div class="view-switch" role="group" aria-label="View mode">
+        <button class="view-opt" type="button" data-view-opt="report" aria-pressed="false">Report</button>
+        <button class="view-opt" type="button" data-view-opt="split" aria-pressed="true">Split</button>
+        <button class="view-opt" type="button" data-view-opt="contract" aria-pressed="false">Contract</button>
+      </div>
+
+      <div class="workspace">
+        <div class="report-col">
+          <nav class="tabrail" aria-label="Primary">
+            <div class="tabbar" role="tablist" aria-label="Report sections">
+              <button class="tab" id="tab-understand" type="button" role="tab" data-tab="understand"
+                      aria-selected="true" aria-controls="panel-understand" tabindex="0">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield" /></svg>
+                <span class="tab-label">Understand</span>
+              </button>
+              <button class="tab" id="tab-negotiate" type="button" role="tab" data-tab="negotiate"
+                      aria-selected="false" aria-controls="panel-negotiate" tabindex="-1">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mail" /></svg>
+                <span class="tab-label">Negotiate</span>
+              </button>
+              <button class="tab" id="tab-document" type="button" role="tab" data-tab="document"
+                      aria-selected="false" aria-controls="panel-document" tabindex="-1">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-file" /></svg>
+                <span class="tab-label">Document / Ask</span>
+              </button>
+            </div>
+          </nav>
+
+          <section class="tabpanel" id="panel-understand" role="tabpanel" aria-labelledby="tab-understand"
+                   data-tab-panel="understand" tabindex="0">
+            <div class="slot" data-slot="gap-banner"></div>
+            <div class="slot" data-slot="hero"></div>
+            <div class="slot" data-slot="clauses"></div>
+            <div class="slot" data-slot="playlist"></div>
+            <div class="slot" data-slot="disclaimer"></div>
+          </section>
+
+          <section class="tabpanel" id="panel-negotiate" role="tabpanel" aria-labelledby="tab-negotiate"
+                   data-tab-panel="negotiate" tabindex="0" hidden>
+            <div class="slot" data-slot="negotiate"></div>
+          </section>
+        </div>
+
+        <div class="contract-col">
+          <section class="tabpanel" id="panel-document" role="tabpanel" aria-labelledby="tab-document"
+                   data-tab-panel="document" tabindex="0">
+            <div class="slot" data-slot="contract"></div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ─── Mobile persistent action (§2) ─────────────────────────────── -->
+      <div class="sticky-bar">
+        <button class="btn-play-60" type="button" data-play60>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-play" /></svg>
+          <span>Play 60s</span>
+        </button>
+        <button class="btn-hold-ask" type="button" data-state="idle" data-holdask>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mic" /></svg>
+          <span>Hold to Ask</span>
+        </button>
+      </div>
+
+      <!-- ─── Desktop floating Ask (§8.2) ───────────────────────────────── -->
+      <button class="ask-fab" type="button" aria-expanded="false" aria-controls="ask-drawer"
+              aria-label="Ask about this agreement" data-ask-fab>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mic" /></svg>
+        <span class="ask-fab-label">Ask</span>
+      </button>
+
+      <aside class="ask-drawer" id="ask-drawer" data-open="false" aria-label="Ask about this agreement" aria-hidden="true">
+        <div class="ask-drawer-head">
+          <h2 class="ask-drawer-title">Ask about this agreement</h2>
+          <button class="ask-close" type="button" aria-label="Close Ask panel" data-ask-close>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <form class="ask-form" data-ask-form>
+          <label class="ask-label" for="ask-input">Your question</label>
+          <textarea class="ask-input" id="ask-input" rows="3" placeholder="Deposit refund eshtu dina agutte?"></textarea>
+          <button class="ask-send" type="submit">Ask</button>
+        </form>
+        <div class="ask-results" data-ask-results aria-live="polite">
+          <p class="ask-empty">Answers appear here and point back to the clause they came from.</p>
+        </div>
+      </aside>
+
+      <!-- ─── Vault drawer (§9, §3 — never a 4th tab) ───────────────────── -->
+      <aside class="vault-drawer" id="vault-drawer" data-open="false" aria-label="Saved documents" aria-hidden="true">
+        <div class="vault-head">
+          <h2 class="vault-title">Saved on this device</h2>
+          <button class="vault-close" type="button" aria-label="Close saved documents" data-vault-close>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <p class="vault-note">Titles, notes and scores only. Images and audio are never stored.</p>
+        <div class="vault-actions">
+          <button class="vault-save" type="button" data-vault-save>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-lock" /></svg>
+            <span>Save this check</span>
+          </button>
+          <label class="vault-nosave">
+            <input type="checkbox" data-vault-nosave />
+            <span>Don't save</span>
+          </label>
+        </div>
+        <ul class="vault-list" data-vault-list>
+          <li class="vault-empty">Nothing saved yet.</li>
+        </ul>
+        <button class="vault-clear" type="button" data-vault-clear>Clear all</button>
+      </aside>
+
+      <div class="toast" role="status" data-tone="ok" aria-live="polite" hidden>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check" /></svg>
+        <span class="toast-text" data-toast-text>Copied</span>
+      </div>
+
+      <!-- ─── Mobile QR modal (§8.1) ─────────────────────────────────────── -->
+      <dialog class="qr-dialog" id="qr-dialog" aria-labelledby="qr-title">
+        <div class="qr-head">
+          <h2 class="qr-title" id="qr-title">Open on your phone</h2>
+          <button class="qr-close" type="button" aria-label="Close QR dialog" data-qr-close>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <!-- Wave 2: swap .qr-placeholder for a generated data-URI QR image. -->
+        <div class="qr-frame">
+          <svg class="qr-img" role="img" aria-label="QR code to open SignClear on your phone" viewBox="0 0 96 96">
+            <rect x="6" y="6" width="24" height="24" rx="3" />
+            <rect x="66" y="6" width="24" height="24" rx="3" />
+            <rect x="6" y="66" width="24" height="24" rx="3" />
+            <path d="M42 6h12v12H42zM42 30h12v12H42zM66 42h24v12H66zM6 42h24v12H6zM42 54h12v36H42zM66 66h12v12H66zM84 66h6v24h-6z" />
+          </svg>
+        </div>
+        <p class="qr-url" data-qr-url>—</p>
+        <p class="qr-hint">Scan to run the same flow on your phone.</p>
+        <button class="qr-copy" type="button" data-qr-copy>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-copy" /></svg>
+          <span>Copy link</span>
+        </button>
+      </dialog>
+    </div>
   </main>
+
+  <footer class="app-footer">
+    <p><span class="footer-mark">SignClear</span> · clarity, not counsel · built for Indian agreements</p>
+  </footer>
+
   <script type="module" src="./js/main.js"></script>
 </body>
 </html>
