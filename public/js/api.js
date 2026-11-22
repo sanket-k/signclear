@@ -10,6 +10,9 @@
 //     verifier.js (the canonical implementation) so the server never computes money.
 //   * docs/shared-contract.md §7 — if /api/audit is unreachable we render the preset
 //     result and the shell flips `data-offline="true"`. Stage safety over correctness.
+//   * docs/preset-audit-fixtures.md §Rule — offline we prefer the preset's own fixture
+//     `public/presets/<id>.audit.json` so each chip renders its own, correct report;
+//     `mock-audit.json` (the BLR rental) is only the last resort.
 //   * No top-level side effects, no new deps, relative URLs only, `fetch` guarded.
 
 const PRESET_DIR = "./presets/";
@@ -118,6 +121,40 @@ function loadMockAudit(signal) {
     });
   }
   return mockAuditPromise;
+}
+
+// --- presets/<id>.audit.json, one fixture per preset -------------------------
+// docs/preset-audit-fixtures.md — offline, each chip must render its *own* report;
+// mock-audit.json is the BLR rental and must only be the last resort.
+
+const presetAuditPromises = new Map();
+
+/**
+ * `presetId` becomes a URL path segment, so clamp it to a boring id.
+ * Anything that is not `[a-z0-9-]` is dropped; empty → the default preset.
+ */
+function sanitisePresetId(value) {
+  const raw = typeof value === "string" ? value.trim().toLowerCase() : "";
+  const cleaned = raw.replace(/[^a-z0-9-]/g, "").replace(/^-+|-+$/g, "");
+  return cleaned || DEFAULT_PRESET_ID;
+}
+
+/** `./presets/<id>.audit.json` — rejects if absent (sibling lane may not be merged). */
+function loadPresetAudit(id, signal) {
+  const key = sanitisePresetId(id);
+  const cached = presetAuditPromises.get(key);
+  if (cached) return cached;
+
+  const promise = getJSON(`${PRESET_DIR}${key}.audit.json`, signal).then((data) => {
+    if (!hasClauses(data)) throw new Error(`${key}.audit.json has no clauses`);
+    return data;
+  });
+  presetAuditPromises.set(key, promise);
+  // A 404 must not poison the cache: drop the entry so a retry can still succeed.
+  promise.catch(() => {
+    if (presetAuditPromises.get(key) === promise) presetAuditPromises.delete(key);
+  });
+  return promise;
 }
 
 /**
@@ -239,7 +276,8 @@ function minimalAudit(language) {
  * @returns {Promise<{ audit: object, offline: boolean }>}
  */
 export async function loadAudit({ presetId = DEFAULT_PRESET_ID, language, signal } = {}) {
-  const id = typeof presetId === "string" && presetId.trim() ? presetId.trim() : DEFAULT_PRESET_ID;
+  // `id` is used as a path segment twice, so it is clamped to [a-z0-9-] first.
+  const id = sanitisePresetId(presetId);
 
   // 1. The preset supplies the text we send, so read it first (and keep whatever
   //    we learn about the fixture, so a later failure needs no second fetch).
@@ -286,7 +324,21 @@ export async function loadAudit({ presetId = DEFAULT_PRESET_ID, language, signal
     }
   }
 
-  // 3. Offline path — never throws.
+  // 3. Offline path — never throws. Order (docs/preset-audit-fixtures.md):
+  //    (a) this preset's own fixture ./presets/<id>.audit.json
+  //    (b) the shared ./mock-audit.json last resort (the BLR rental)
+  //    (c) a minimal shape, so downstream always gets `clauses: []`
+  try {
+    const presetAudit = await loadPresetAudit(id, signal);
+    if (hasClauses(presetAudit)) {
+      const audit = Object.assign({}, presetAudit);
+      if (!audit.language) audit.language = normaliseLanguage(language);
+      return { audit, offline: true };
+    }
+  } catch {
+    /* no per-preset fixture yet — fall back to the shared mock */
+  }
+
   try {
     const mock = fixture || (await loadMockAudit(signal));
     if (hasClauses(mock)) {
