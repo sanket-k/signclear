@@ -289,3 +289,45 @@ test("modules are loadable in Node without a document", async () => {
     }
   }
 });
+
+// ── Regression: desktop Split must show BOTH panes (§2) ────────────────────
+// Two bugs shipped past the unit tests and were only caught in a real browser:
+//   1. tabs.js set `hidden` on every inactive panel, which also hid the
+//      contract column in Split.
+//   2. The mobile tab router at app.css:310 `(0,4,0)` outranked the desktop
+//      `.app-shell [data-tab-panel]` `(0,2,0)` reset, so the CSS kept the
+//      contract panel `display:none` on desktop.
+// These assert the source, because Node has no layout engine.
+
+test("tabs.js must not hide the desktop contract panel", () => {
+    if (!has("public/js/ui/tabs.js")) {
+      console.log("SKIP: public/js/ui/tabs.js not merged yet");
+      return;
+    }
+    const src = read("public/js/ui/tabs.js");
+    assert.ok(
+      /routePanels/.test(src),
+      "tabs.js must route panels through routePanels() rather than setting `hidden` inline"
+    );
+    assert.ok(
+      /removeAttribute\(\s*["']hidden["']\s*\)/.test(src),
+      "tabs.js must clear `hidden` on desktop so Split keeps the contract column visible"
+    );
+    assert.ok(
+      /isDesktop\(\)/.test(src),
+      "tabs.js panel routing must branch on isDesktop()"
+    );
+  });
+
+test("app.css re-asserts the desktop contract panel above the mobile router", () => {
+    if (!has("public/styles/app.css")) return;
+    const css = read("public/styles/app.css");
+    const mobileRouter = /\.app-shell\[data-active-tab="[a-z]+"\]\s*\[data-tab-panel\]:not/;
+    assert.ok(mobileRouter.test(css), "expected the mobile tab router rule to still exist");
+    // Desktop block must re-declare the contract-col panel at equal specificity
+    // (attribute selector) or the unscoped mobile rule wins and Split goes blank.
+    assert.ok(
+      /\.app-shell\[data-active-tab\][^{]*\.contract-col[^{]*\[data-tab-panel\][^{]*\{[^}]*display:\s*block/.test(css),
+      "app.css must re-assert `.app-shell[data-active-tab] .contract-col [data-tab-panel] { display: block }`"
+    );
+  });

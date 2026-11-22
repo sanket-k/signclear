@@ -2899,6 +2899,12 @@ svg {
     display: block;
   }
 
+  /* The mobile tab router above is unscoped and has higher specificity, so the
+     contract column's panel must be re-asserted here at equal specificity. */
+  .app-shell[data-active-tab] .contract-col [data-tab-panel] {
+    display: block;
+  }
+
   .app-shell[data-active-tab="understand"] [data-tab-panel="negotiate"],
   .app-shell[data-active-tab="negotiate"] [data-tab-panel="understand"] {
     display: none;

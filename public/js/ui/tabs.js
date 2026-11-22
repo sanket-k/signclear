@@ -47,14 +47,21 @@ export function createTabs(ctx) {
       tab.setAttribute('tabindex', on ? '0' : '-1');
       if (on && focus && typeof tab.focus === 'function') tab.focus();
     });
-    const d = doc();
-    if (d && d.querySelectorAll) {
-      Array.from(d.querySelectorAll('[data-tab-panel]')).forEach((panel) => {
-        panel.hidden = panel.dataset.tabPanel !== id;
-      });
-    }
     const s = shell();
     if (s) s.dataset.activeTab = id;
+    routePanels();
+  }
+
+  // Desktop routes panels by the view switch + data-active-tab (app.css §2), so the
+  // contract column must stay visible in Split. Only the mobile feed uses [hidden].
+  function routePanels() {
+    const d = doc();
+    if (!d || !d.querySelectorAll) return;
+    const desktop = isDesktop();
+    Array.from(d.querySelectorAll('[data-tab-panel]')).forEach((panel) => {
+      if (desktop) panel.removeAttribute('hidden');
+      else panel.hidden = panel.dataset.tabPanel !== active;
+    });
   }
 
   function isDesktop() {
@@ -120,6 +127,18 @@ export function createTabs(ctx) {
       if (s) s.dataset.view = 'feed';
     } else {
       setView(view);
+    }
+    routePanels();
+
+    const win = d.defaultView;
+    if (win && typeof win.matchMedia === 'function') {
+      const mq = win.matchMedia(DESKTOP);
+      const onChange = () => {
+        if (!isDesktop() && shell()) shell().dataset.view = 'feed';
+        routePanels();
+      };
+      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', onChange);
+      else if (typeof mq.addListener === 'function') mq.addListener(onChange);
     }
 
     return { activate, setView };
