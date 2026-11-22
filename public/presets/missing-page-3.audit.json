@@ -304,7 +304,7 @@
     "illegible_segments": [],
     "banner": {
       "level": "amber",
-      "message": "Incomplete scan. We found Clause 4 → 7. Page 3 is missing."
+      "message": "We found Clause 4 → 7. Page 3 is missing."
     }
   },
   "ocr": {

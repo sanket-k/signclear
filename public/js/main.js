@@ -17,6 +17,14 @@ import { createTabs } from './ui/tabs.js';
 import { createQr } from './ui/qr.js';
 import { createPresets } from './ui/presets.js';
 import { createVault } from './vault.js';
+import { createPii } from './ui/pii.js';
+import { createOffline } from './ui/offline.js';
+import { createA11y } from './ui/a11y.js';
+import { createInstall } from './ui/install.js';
+import { createBriefAction } from './ui/brief-action.js';
+import { createCopyButton } from './ui/copy.js';
+import { createErrorBoundary } from './ui/errorboundary.js';
+import { createSelfTest } from './ui/selftest.js';
 
 const LANGS = ['kn', 'hi', 'ta', 'en'];
 const DEFAULT_LANG = 'en';
@@ -55,6 +63,7 @@ function boot() {
   let player = null;
   let ask = null;
   let run = null;
+  let offline = null;
 
   const emit = (name, detail) => {
     try {
@@ -167,10 +176,15 @@ function boot() {
       });
     },
     loadPreset: async (id) => {
-      const { audit, offline } = await loadAudit({ presetId: id, language: state.lang });
-      setAudit(audit);
-      if (shell) shell.dataset.offline = String(!!offline);
-      return { offline };
+      const result = await loadAudit({ presetId: id, language: state.lang });
+      setAudit(result.audit);
+      if (shell) shell.dataset.offline = String(!!result.offline);
+      try {
+        offline?.set?.(!!result.offline);
+      } catch (err) {
+        log('offline:set', err);
+      }
+      return { offline: result.offline };
     },
   };
 
@@ -302,22 +316,60 @@ function boot() {
 
   applyLangPill(state.lang);
 
+  // Constructed once so `set()` can be driven from the load path and `mount()`
+  // from mountAll(); a factory that throws degrades to a no-op.
+  const safeFactory = (factory, label) => {
+    try {
+      return factory(ctx);
+    } catch (err) {
+      log(`create:${label}`, err);
+      return null;
+    }
+  };
+  const offlineInstance = safeFactory(createOffline, 'createOffline');
+  offline = offlineInstance;
+
   const mountAll = () => {
-    for (const factory of [createTheme, createLang, createTabs, createQr, createVault, createPresets]) {
+    const factories = [
+      createErrorBoundary,
+      createTheme,
+      createLang,
+      createTabs,
+      createQr,
+      createVault,
+      createPresets,
+      createPii,
+      createA11y,
+      createInstall,
+      createBriefAction,
+      createCopyButton,
+      createSelfTest,
+    ];
+    for (const factory of factories) {
       try {
         factory(ctx)?.mount?.();
       } catch (err) {
         log(`mount:${factory.name}`, err);
       }
     }
+    try {
+      offline?.mount?.();
+    } catch (err) {
+      log('mount:offline', err);
+    }
   };
 
   const start = async () => {
     try {
-      const { audit, offline } = await loadAudit({ presetId: FIRST_PRESET, language: state.lang });
-      setAudit(audit);
-      if (shell) shell.dataset.offline = String(!!offline);
-      if (offline) toastCtl.show('Offline sample', 'warn');
+      const result = await loadAudit({ presetId: FIRST_PRESET, language: state.lang });
+      setAudit(result.audit);
+      if (shell) shell.dataset.offline = String(!!result.offline);
+      try {
+        offline?.set?.(!!result.offline);
+      } catch (err) {
+        log('offline:set', err);
+      }
+      if (result.offline) toastCtl.show('Offline sample', 'warn');
     } catch (err) {
       log('boot:loadAudit', err);
     }
