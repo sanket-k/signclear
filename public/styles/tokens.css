@@ -112,6 +112,42 @@
   --sev-safe-border: #1E6B47;
 }
 
+/* ── Appended (Lane B, Phase 5) ─────────────────────────────────────────────
+   Two genuinely-missing groups, added here so `app.css` can hold ZERO raw
+   literals (DESIGN_SYSTEM §9 definition-of-done):
+   1. structural hairline / ring widths that §2, §5, §7.1 and §8.3 specify in
+      `px` inside their snippets — they live here so app.css uses var() only;
+   2. the `--verify-ocr-*` triplet that §7.4 mandates but this file did not yet
+      define. One triplet per theme, no component-local overrides.             */
+:root {
+  --bw-hairline: 1px;
+  --bw-focus: 2px;
+  --bw-accent: 3px;
+  --bw-gap: 4px;
+  --ring-spread-min: 0px;
+  --ring-spread-max: 8px;
+  --ring-primary: rgb(29 78 216 / .45);
+  --ring-clear: rgb(29 78 216 / 0);
+  --target-min: 44px;
+  --shell-max: 1440px;
+  --sheet-min: 320px;
+  --sheet-max: 420px;
+  --qr-size: 220px;
+  --qr-quiet: #FFFFFF;   /* white quiet zone in BOTH themes — never invert a QR (§8.1) */
+  --qr-ink: #0F172A;     /* dark QR modules in BOTH themes */
+  --dim-opacity: .18;
+  --hit-ring: 0 0 0 var(--bw-focus) var(--primary-soft);
+  --verify-ocr-bg: #FFFBEB;
+  --verify-ocr-border: #FEC84B;
+  --verify-ocr-underline: #F59E0B;
+}
+
+[data-theme="dark"] {
+  --verify-ocr-bg: #2A2109;
+  --verify-ocr-border: #7A4F10;
+  --verify-ocr-underline: #FEC84B;
+}
+
 @media (min-width: 900px) {
   :root {
     --fs-body: 16px;
