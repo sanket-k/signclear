@@ -1,0 +1,51 @@
+{
+  "schema_version": "contract_preset_v1",
+  "preset_id": "rbi-loan",
+  "label": "RBI Loan",
+  "description": "₹6L NBFC personal loan — no KFS, flat rate, 5% prepayment penalty",
+  "language_default": "hi",
+  "expected_pack_id": "in-central-rbi-loan",
+  "document": {
+    "doc_type": "personal_loan",
+    "title": "Personal Loan Agreement — ₹6,00,000",
+    "page_count": 3,
+    "source_lane": "vector_pdf"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "text": "PERSONAL LOAN AGREEMENT\n\nBorrower: Mr. Suresh Kumar, Aadhaar 9931 4402 8876, PAN PQRST5678G, phone +91 90080 44221, email suresh.kumar@example.com, UPI suresh@okicici. Lender: ABC Finance NBFC Ltd, Bengaluru, Karnataka.\n\n1. Loan Amount. The Lender agrees to lend Rs. 6,00,000 (Rupees Six Lakh only) at a flat interest rate of 12% per annum."
+    },
+    {
+      "page": 2,
+      "text": "2. Interest and Fees. Interest shall be charged on a flat-rate basis. Processing fee of Rs. 18,000 and document charges of Rs. 3,500 shall be deducted from the disbursed amount. No Key Facts Statement is annexed to this Agreement.\n\n3. Repayment. The Borrower shall repay the loan in 48 equal monthly instalments."
+    },
+    {
+      "page": 3,
+      "text": "4. Prepayment. If the Borrower forecloses or prepays the loan at any time, the Borrower shall pay a prepayment penalty of 5% of the outstanding principal.\n\n5. Default. On any delayed payment, penal interest shall accrue at 24% per annum and shall be added to the principal outstanding and compounded monthly."
+    }
+  ],
+  "expected_flags": [
+    { "rule_id": "IN_RBI_KFS_DISCLOSURE", "clause_index": 2, "severity": "critical" },
+    { "rule_id": "IN_RBI_APR_ALLIN_COST", "clause_index": 1, "severity": "critical" },
+    { "rule_id": "IN_RBI_PREPAYMENT_PENALTY", "clause_index": 4, "severity": "caution" },
+    { "rule_id": "IN_RBI_PENAL_CHARGE_CAP", "clause_index": 5, "severity": "caution" }
+  ],
+  "expected_completeness": {
+    "status": "complete",
+    "pages_found": [1, 2, 3],
+    "pages_missing": [],
+    "clause_gaps": []
+  },
+  "expected_pii": {
+    "pii_tokens_found": 7,
+    "pii_token_types": {
+      "aadhaar": 1,
+      "pan": 1,
+      "phone": 1,
+      "email": 1,
+      "upi": 1,
+      "party_header": 2
+    }
+  }
+}

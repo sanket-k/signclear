@@ -32,7 +32,7 @@ scroll/pulse, and finding → clause links. Every `finding_id` is stable within 
 | `rules[].benchmark` | `findings[].benchmark` | Echoed (`metric`, `typical_label`, `max_fair_value` when present). |
 | `rules[].statutory_citation` | `findings[].statutory_citation` | Rendered **only** when `rule_id` is in the active pack; otherwise `null`. |
 | `rules[].detection_hint` | — | Server-side prompt input only; never returns to client. |
-| `rules[].negotiation_ask` | `findings[].negotiation_ask` | Source for the Negotiate tab checkboxes. |
+| `rules[].negotiation_ask` | `findings[].negotiation_ask` | Source for the Negotiate tab checkboxes. A pack may write `{clause_ref}` in `firm_ask` / `polite_ask`; the server resolves it to the printed clause number before serving. |
 | `expected_clauses[]` (`id`, `label`, `why_it_matters`) | `expected_clauses[]` | Audit reports presence/absence of each expected clause; missing ones feed `completeness`. |
 
 ---

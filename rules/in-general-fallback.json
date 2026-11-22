@@ -48,7 +48,7 @@
       "statutory_citation": {
         "act": "Indian Contract Act, 1872",
         "section": "Section 27 — Agreement in restraint of trade",
-        "source_url": "https://indiacode.nic.in"
+        "source_url": "https://www.indiacode.nic.in"
       },
       "detection_hint": "If this is an offer letter or employment contract and it contains a post-employment non-compete restriction (any duration), flag it. Section 27 voids post-employment non-competes. In-term restrictions are generally enforceable.",
       "negotiation_ask": {
@@ -72,7 +72,7 @@
       "statutory_citation": {
         "act": "Indian Contract Act, 1872; Consumer Protection Act, 2019",
         "section": "Unfair trade practice — open-ended deposit retention",
-        "source_url": "https://indiacode.nic.in"
+        "source_url": "https://www.indiacode.nic.in"
       },
       "detection_hint": "Flag if the agreement does not specify a refund deadline for any security deposit, or says the deposit will be refunded 'after deductions' without a time limit.",
       "negotiation_ask": {
@@ -95,7 +95,7 @@
       "statutory_citation": {
         "act": "Indian Contract Act, 1872",
         "section": "Section 74 — Reasonable compensation for breach",
-        "source_url": "https://indiacode.nic.in"
+        "source_url": "https://www.indiacode.nic.in"
       },
       "detection_hint": "Flag clauses that impose a penalty on one party only (e.g. only the tenant, only the employee), with no equivalent obligation on the other party, especially where the penalty is disproportionate to any likely loss.",
       "negotiation_ask": {

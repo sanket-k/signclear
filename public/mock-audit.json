@@ -78,13 +78,13 @@
       },
       "statutory_citation": {
         "act": "Karnataka Rent Act, 1999",
-        "section": "Security deposit norms",
-        "source_url": "https://indiacode.nic.in"
+        "section": "Security deposit norms (no statutory cap)",
+        "source_url": "https://www.indiacode.nic.in"
       },
       "clause_id": "c3",
       "quote": "The Tenant shall pay an interest-free security deposit of Rs. 2,00,000 (Rupees Two Lakh only), equal to ten months rent.",
       "quote_verified": true,
-      "jaccard": 0.93,
+      "jaccard": 1,
       "explanation": "Your deposit equals ten months of rent. In Bengaluru the usual range is two to three months, so you are exposed for roughly seven extra months of rent.",
       "negotiation_ask": {
         "short_title": "Cap the deposit at three months",
@@ -108,17 +108,17 @@
       "statutory_citation": {
         "act": "Indian Contract Act, 1872",
         "section": "Section 74 — Reasonable compensation for breach",
-        "source_url": "https://indiacode.nic.in"
+        "source_url": "https://www.indiacode.nic.in"
       },
-      "clause_id": "c4",
+      "clause_id": "c5",
       "quote": "If the Tenant vacates before completion of eleven months, the Tenant shall forfeit four months rent as lock-in charges.",
       "quote_verified": true,
-      "jaccard": 0.89,
+      "jaccard": 1,
       "explanation": "Leaving early costs four months' rent even if you give notice. Section 74 limits penalties to a reasonable estimate of actual loss.",
       "negotiation_ask": {
         "short_title": "Replace lock-in with an exit notice",
         "polite_ask": "Could we replace the four-month lock-in penalty with a two-month notice period, so either side can exit fairly?",
-        "firm_ask": "A four-month forfeiture is disproportionate to actual loss under Section 74. Please replace Clause 4's lock-in penalty with a one-month notice-based exit.",
+        "firm_ask": "A four-month forfeiture is disproportionate to actual loss under Section 74. Please replace Clause 5's lock-in penalty with a one-month notice-based exit.",
         "replacement_wording": "Either party may terminate this Agreement by giving one (1) month's written notice. No separate lock-in penalty shall apply."
       }
     },
@@ -133,11 +133,15 @@
         "metric": "notice_symmetry",
         "typical_label": "Same notice period for both parties"
       },
-      "statutory_citation": null,
+      "statutory_citation": {
+        "act": "Karnataka Rent Act, 1999",
+        "section": "No statutory notice-symmetry mandate — Bengaluru market norm",
+        "source_url": "https://www.indiacode.nic.in"
+      },
       "clause_id": "c2",
       "quote": "The Tenant shall provide three months written notice prior to vacating the premises.",
       "quote_verified": true,
-      "jaccard": 0.87,
+      "jaccard": 1,
       "explanation": "Only you must give three months' notice. The owner has no matching obligation, so they can ask you to leave sooner.",
       "negotiation_ask": {
         "short_title": "Make notice the same for both sides",
@@ -161,17 +165,17 @@
       "statutory_citation": {
         "act": "Indian Contract Act, 1872; Consumer Protection Act, 2019",
         "section": "Unfair trade practice — open-ended deposit retention",
-        "source_url": "https://indiacode.nic.in"
+        "source_url": "https://www.indiacode.nic.in"
       },
-      "clause_id": "c3",
+      "clause_id": "c4",
       "quote": "The security deposit shall be refunded after deduction of dues and damages, if any.",
       "quote_verified": true,
-      "jaccard": 0.85,
+      "jaccard": 1,
       "explanation": "There is no date by which the deposit must come back. Add a 15-day deadline with written, itemised deductions.",
       "negotiation_ask": {
         "short_title": "Add a 15-day refund deadline",
         "polite_ask": "Could we add that the deposit will be returned within 15 days of handover, with any deductions listed in writing?",
-        "firm_ask": "Clause 3 leaves the deposit refund open-ended. Please add a 15-day deadline after handover with an itemised deduction statement.",
+        "firm_ask": "Clause 4 leaves the deposit refund open-ended. Please add a 15-day deadline after handover with an itemised deduction statement.",
         "replacement_wording": "Any refundable deposit shall be returned, after lawful and itemised deductions (if any), within fifteen (15) days of handover."
       }
     },
@@ -186,16 +190,20 @@
         "metric": "painting_charge",
         "typical_label": "Actual cost with receipts, normal wear excluded"
       },
-      "statutory_citation": null,
-      "clause_id": "c5",
+      "statutory_citation": {
+        "act": "Karnataka Rent Act, 1999",
+        "section": "No fixed painting-charge mandate — local norm is actual cost with receipts",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "clause_id": "c6",
       "quote": "The Tenant shall pay a painting charge of Rs. 40,000 at the time of vacating the premises.",
       "quote_verified": true,
-      "jaccard": 0.82,
+      "jaccard": 1,
       "explanation": "A flat ₹40,000 painting charge is charged even if the flat is clean. Ask for actual, receipt-backed costs and normal wear exclusion.",
       "negotiation_ask": {
         "short_title": "Charge actual painting cost only",
         "polite_ask": "Could the painting charge be based on actual cost with receipts, excluding normal wear and tear?",
-        "firm_ask": "A fixed ₹40,000 painting charge is above the local norm. Please revise Clause 5 to actual, receipt-backed cost excluding normal wear.",
+        "firm_ask": "A fixed ₹40,000 painting charge is above the local norm. Please revise Clause 6 to actual, receipt-backed cost excluding normal wear.",
         "replacement_wording": "The Tenant shall bear only the actual, receipt-supported cost of repainting required beyond normal wear and tear."
       }
     }
@@ -225,15 +233,25 @@
       "clause_id": "c3",
       "index": 3,
       "heading": "Security Deposit",
-      "text": "The Tenant shall pay an interest-free security deposit of Rs. 2,00,000 (Rupees Two Lakh only), equal to ten months rent. The security deposit shall be refunded after deduction of dues and damages, if any.",
+      "text": "The Tenant shall pay an interest-free security deposit of Rs. 2,00,000 (Rupees Two Lakh only), equal to ten months rent.",
       "page": 2,
       "status": "ok",
-      "finding_ids": ["F1", "F4"],
+      "finding_ids": ["F1"],
       "ocr_tokens": []
     },
     {
       "clause_id": "c4",
       "index": 4,
+      "heading": "Refund of Deposit",
+      "text": "The security deposit shall be refunded after deduction of dues and damages, if any.",
+      "page": 2,
+      "status": "ok",
+      "finding_ids": ["F4"],
+      "ocr_tokens": []
+    },
+    {
+      "clause_id": "c5",
+      "index": 5,
       "heading": "Lock-in Period",
       "text": "If the Tenant vacates before completion of eleven months, the Tenant shall forfeit four months rent as lock-in charges.",
       "page": 3,
@@ -242,8 +260,8 @@
       "ocr_tokens": []
     },
     {
-      "clause_id": "c5",
-      "index": 5,
+      "clause_id": "c6",
+      "index": 6,
       "heading": "Maintenance and Exit Charges",
       "text": "The Tenant shall pay a painting charge of Rs. 40,000 at the time of vacating the premises.",
       "page": 4,
@@ -264,8 +282,8 @@
       "id": "notice_period",
       "label": "Symmetric notice period",
       "why_it_matters": "One-sided notice lets the stronger party exit without giving the weaker party time to plan.",
-      "present": true,
-      "clause_id": "c2"
+      "present": false,
+      "clause_id": null
     },
     {
       "id": "dispute_resolution",
@@ -280,20 +298,28 @@
       "seq": 1,
       "clause_id": "c3",
       "language": "kn",
-      "text": "ನಿಮ್ಮ ಠೇವಣಿ ಹತ್ತು ತಿಂಗಳ ಬಾಡಿಗೆಗೆ ಸಮಾನವಾಗಿದೆ. ಇದು ಸಾಮಾನ್ಯಕ್ಕಿಂತ ಹೆಚ್ಚು, ಮತ್ತು ಹಿಂತಿರುಗಿಸುವ ಗಡುವು ಇಲ್ಲ.",
-      "text_en": "Your deposit equals ten months' rent. This is above the norm, and there is no refund deadline.",
+      "text": "ನಿಮ್ಮ ಠೇವಣಿ ಹತ್ತು ತಿಂಗಳ ಬಾಡಿಗೆಗೆ ಸಮಾನವಾಗಿದೆ. ಇದು ಸಾಮಾನ್ಯಕ್ಕಿಂತ ಹೆಚ್ಚು.",
+      "text_en": "Your deposit equals ten months' rent. This is above the norm.",
       "audio_url": null
     },
     {
       "seq": 2,
       "clause_id": "c4",
       "language": "kn",
+      "text": "ಠೇವಣಿ ಹಿಂತಿರುಗಿಸಲು ಯಾವುದೇ ಗಡುವು ಇಲ್ಲ. ಹದಿನೈದು ದಿನದ ಮಿತಿ ಕೇಳಿ.",
+      "text_en": "There is no deadline to return the deposit. Ask for a fifteen-day limit.",
+      "audio_url": null
+    },
+    {
+      "seq": 3,
+      "clause_id": "c5",
+      "language": "kn",
       "text": "ಹನ್ನೊಂದು ತಿಂಗಳ ಮುಂಚೆ ಹೋದರೆ ನಾಲ್ಕು ತಿಂಗಳ ಬಾಡಿಗೆ ಕಳೆದುಹೋಗುತ್ತದೆ. ಇದು ಅನ್ಯಾಯದ lock-in.",
       "text_en": "Leave before eleven months and you lose four months' rent. This lock-in is unfair.",
       "audio_url": null
     },
     {
-      "seq": 3,
+      "seq": 4,
       "clause_id": "c2",
       "language": "kn",
       "text": "ಮೂರು ತಿಂಗಳ notice ಕೇವಲ ನಿಮಗೆ ಮಾತ್ರ. ಮಾಲೀಕರಿಗೆ ಅದೇ ನಿಯಮ ಇಲ್ಲ.",
@@ -301,8 +327,8 @@
       "audio_url": null
     },
     {
-      "seq": 4,
-      "clause_id": "c5",
+      "seq": 5,
+      "clause_id": "c6",
       "language": "kn",
       "text": "ಹೊರಡುವಾಗ ಚಿತ್ರ ಬಣ್ಣಕ್ಕೆ ನಲವತ್ತು ಸಾವಿರ ನಿಗದಿ ಶುಲ್ಕ. ಇದಕ್ಕೆ ರಸೀದಿ ಬೇಕು.",
       "text_en": "A fixed forty thousand painting charge at exit. Ask for receipts.",

@@ -35,16 +35,16 @@
 
 # Phase 1 — Rule Packs & Fixtures
 
-- [ ] `in-ka-rental` — deposit norm, lock-in months, notice symmetry, painting/exit charges, refund timeline.
-- [ ] `in-central-rbi-loan` — KFS disclosure, APR/all-in cost, prepayment penalty, penal-charge cap.
-- [ ] `in-central-employment` — Sec 27 non-compete void, bond/clawback, notice, ESOP lock-in.
-- [ ] Every rule carries `basis_type`, `severity`, `statutory_citation`, `verified_date`, `negotiation_ask` (polite + firm + replacement).
-- [ ] Validate all packs against `rules/schema.json` (`pack_id`, `rule_id`, `verified_date`).
-- [ ] Presets in `public/presets/*.json`
-  - [ ] `blr-rental`, `rbi-loan`, `startup-offer`, `missing-page-3`.
-  - [ ] Each = contract text fixture + expected pack id + expected flags.
-  - [ ] Missing Page 3 encodes the `Clause 4 → 7` gap.
-- [ ] `mock-audit.json` — ≥5 clauses, 3 severity types, rupee exposure, Way-Out inputs.
+- [x] `in-ka-rental` — deposit norm, lock-in months, notice symmetry, painting/exit charges, refund timeline.
+- [x] `in-central-rbi-loan` — KFS disclosure, APR/all-in cost, prepayment penalty, penal-charge cap.
+- [x] `in-central-employment` — Sec 27 non-compete void, bond/clawback, notice, ESOP lock-in.
+- [x] Every rule carries `basis_type`, `severity`, `statutory_citation`, `verified_date`, `negotiation_ask` (polite + firm + replacement).
+- [x] Validate all packs against `rules/schema.json` (`pack_id`, `rule_id`, `verified_date`).
+- [x] Presets in `public/presets/*.json`
+  - [x] `blr-rental`, `rbi-loan`, `startup-offer`, `missing-page-3`.
+  - [x] Each = contract text fixture + expected pack id + expected flags.
+  - [x] Missing Page 3 encodes the `Clause 4 → 7` gap.
+- [x] `mock-audit.json` — ≥5 clauses, 3 severity types, rupee exposure, Way-Out inputs.
 
 **✓ Checkpoint 1:** All 4 packs validate; 4 presets exist; `mock-audit.json` renders a full report on paper.
 

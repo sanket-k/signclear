@@ -1,0 +1,125 @@
+{
+  "schema_version": "rule_pack_v1",
+  "pack_id": "in-central-rbi-loan",
+  "display_name": "RBI Retail & NBFC Loan Norms (Central)",
+  "jurisdiction": {
+    "country": "IN",
+    "state": null,
+    "cities": []
+  },
+  "contract_types": ["personal_loan"],
+  "verified_date": "2026-11-21",
+  "legal_basis": "Reserve Bank of India (Key Facts Statement (KFS)) Directions, 2024; RBI Fair Lending Practice — Penal Charges in Loan Accounts (2023); RBI Circular on prepayment of floating-rate loans to individual borrowers (2019); read with Section 74 of the Indian Contract Act, 1872 for penal amounts. Applies to loans from scheduled commercial banks, NBFCs and other RBI-regulated entities; it does not govern private money-lending contracts.",
+  "rules": [
+    {
+      "rule_id": "IN_RBI_KFS_DISCLOSURE",
+      "category": "loan_disclosure",
+      "title": "RBI Key Facts Statement (KFS) Disclosure",
+      "basis_type": "statutory_conflict",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "kfs_present",
+        "typical_label": "KFS must be provided before loan signing"
+      },
+      "statutory_citation": {
+        "act": "RBI (Key Facts Statement (KFS)) Directions, 2024",
+        "section": "KFS mandatory disclosure before execution",
+        "source_url": "https://www.rbi.org.in"
+      },
+      "detection_hint": "If this is a loan from a regulated lender and no Key Facts Statement is attached or referenced, flag it. The KFS must be a separate, one-page statement issued before signing, quoting the sanctioned amount, APR, all fees, penal charges and repayment schedule.",
+      "negotiation_ask": {
+        "short_title": "Ask for the RBI Key Facts Statement",
+        "polite_ask": "Could you share the RBI Key Facts Statement for this loan so I can see the all-in cost and fees before signing?",
+        "firm_ask": "Under RBI's KFS Directions, 2024, a Key Facts Statement must be provided before signing. Please share it before I proceed.",
+        "replacement_wording": "The Lender shall provide the Borrower with the RBI-mandated Key Facts Statement (KFS) disclosing the all-inclusive annualised rate, processing fees, penal charges and total cost of credit prior to execution."
+      }
+    },
+    {
+      "rule_id": "IN_RBI_APR_ALLIN_COST",
+      "category": "loan_disclosure",
+      "title": "All-in cost and APR not disclosed",
+      "basis_type": "missing_protection",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "apr_disclosed",
+        "typical_label": "APR disclosed on an all-inclusive basis"
+      },
+      "statutory_citation": {
+        "act": "RBI (Key Facts Statement (KFS)) Directions, 2024",
+        "section": "APR — all-inclusive annualised percentage rate",
+        "source_url": "https://www.rbi.org.in"
+      },
+      "detection_hint": "Flag loan documents that quote only a flat or nominal interest rate and never state the APR (all-inclusive annualised percentage rate) including processing fees, insurance, documentation charges and other deductions. Flat-rate quotes can hide a much higher effective cost.",
+      "negotiation_ask": {
+        "short_title": "Get the all-in APR in writing",
+        "polite_ask": "Could you tell me the all-in APR, including processing fee and insurance, rather than just the flat rate?",
+        "firm_ask": "The document quotes only a flat rate with no all-inclusive APR. RBI's KFS Directions require the APR to be disclosed. Please state the effective annualised rate including all fees before I sign.",
+        "replacement_wording": "The Lender shall disclose the Annualised Percentage Rate (APR) on an all-inclusive basis, including interest, processing fees, insurance and any other charges deducted at disbursement, in the Key Facts Statement."
+      }
+    },
+    {
+      "rule_id": "IN_RBI_PREPAYMENT_PENALTY",
+      "category": "prepayment",
+      "title": "Prepayment penalty on a floating-rate loan",
+      "basis_type": "statutory_conflict",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "prepayment_penalty",
+        "max_fair_value": 0,
+        "typical_label": "No prepayment penalty on floating-rate loans to individuals"
+      },
+      "statutory_citation": {
+        "act": "RBI Circular — Prepayment of floating-rate loans to individual borrowers",
+        "section": "Prohibition on prepayment charges (2019)",
+        "source_url": "https://www.rbi.org.in"
+      },
+      "detection_hint": "Flag any foreclosure or prepayment charge on a floating-rate loan taken by an individual borrower. RBI prohibits lenders from charging prepayment penalties on floating-rate loans to individuals. For fixed-rate loans the charge must still be disclosed up front in the KFS.",
+      "negotiation_ask": {
+        "short_title": "Remove the prepayment penalty",
+        "polite_ask": "Since this is a floating-rate loan, could the prepayment penalty be removed? RBI does not allow one for individuals on floating rates.",
+        "firm_ask": "RBI's 2019 circular bars prepayment penalties on floating-rate loans to individual borrowers. Please remove the foreclosure charge in this clause or switch it to a fixed-rate loan with the charge disclosed in the KFS.",
+        "replacement_wording": "No prepayment or foreclosure charge shall apply where the Borrower prepays a floating-rate loan. For a fixed-rate loan, any prepayment charge shall be disclosed in the Key Facts Statement."
+      }
+    },
+    {
+      "rule_id": "IN_RBI_PENAL_CHARGE_CAP",
+      "category": "penalty",
+      "title": "Penal interest is compounded or disproportionate",
+      "basis_type": "above_local_norm",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "penal_charge_reasonableness",
+        "typical_label": "Flat penal charge, not compounded; no capitalisation"
+      },
+      "statutory_citation": {
+        "act": "RBI Fair Lending Practice — Penal Charges in Loan Accounts, 2023",
+        "section": "Penal charges not to be capitalised or levied as penal interest",
+        "source_url": "https://www.rbi.org.in"
+      },
+      "detection_hint": "Flag clauses that levy penal interest at a compounding rate, add penal charges to the principal, or impose a penal percentage far above the actual loss caused by default. RBI requires penal charges to be a flat, reasonable amount that is not capitalised.",
+      "negotiation_ask": {
+        "short_title": "Cap penal charges at a flat amount",
+        "polite_ask": "Could the penal charge be a flat amount rather than compounding interest added to the principal?",
+        "firm_ask": "RBI's 2023 directions require penal charges to be a reasonable flat amount and not capitalised. Please revise this clause so penal charges are not compounded or added to principal.",
+        "replacement_wording": "Penal charges for delayed payment shall be a flat amount proportionate to the actual loss caused by the default, shall not be capitalised, and shall not exceed the rate disclosed in the Key Facts Statement."
+      }
+    }
+  ],
+  "expected_clauses": [
+    {
+      "id": "kfs_document",
+      "label": "Key Facts Statement attached or referenced",
+      "why_it_matters": "Without the KFS the borrower cannot compare the true cost of credit before signing."
+    },
+    {
+      "id": "prepayment_terms",
+      "label": "Prepayment and foreclosure terms",
+      "why_it_matters": "Undisclosed foreclosure charges can make an early payoff unexpectedly expensive."
+    },
+    {
+      "id": "grievance_officer",
+      "label": "Grievance redressal and nodal officer",
+      "why_it_matters": "RBI-regulated lenders must name a grievance officer; without it, complaints have no escalation path."
+    }
+  ]
+}

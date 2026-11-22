@@ -1,0 +1,127 @@
+{
+  "schema_version": "rule_pack_v1",
+  "pack_id": "in-central-employment",
+  "display_name": "India Central Employment & Offer-Letter Norms",
+  "jurisdiction": {
+    "country": "IN",
+    "state": null,
+    "cities": []
+  },
+  "contract_types": ["employment_offer"],
+  "verified_date": "2026-11-21",
+  "legal_basis": "Indian Contract Act, 1872 (Section 27 — restraint of trade; Section 74 — reasonable compensation), Payment of Wages Act, 1936 and state Shops & Establishments Acts (notice and wage deductions), and SEBI (Share Based Employee Benefits) Regulations for ESOPs. Non-compete voidness is the only rule here that is an absolute statutory conflict.",
+  "rules": [
+    {
+      "rule_id": "IN_EMP_NONCOMPETE_VOID",
+      "category": "restraint_of_trade",
+      "title": "Post-Employment Non-Compete is Void in India",
+      "basis_type": "statutory_conflict",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "noncompete_months",
+        "max_fair_value": 0,
+        "typical_label": "0 months post-employment; only in-term restrictions are valid"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 27 — Agreement in restraint of trade",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "detection_hint": "If the offer letter or employment contract contains a post-employment non-compete restriction of any duration, flag it. Section 27 voids post-employment non-competes; in-term restrictions and confidentiality and non-solicitation obligations are generally valid.",
+      "negotiation_ask": {
+        "short_title": "Post-employment non-compete is unenforceable",
+        "polite_ask": "I understand confidentiality and in-term restrictions are important, but could we remove the post-employment non-compete? Section 27 of the Indian Contract Act voids it, so it doesn't protect either of us.",
+        "firm_ask": "Section 27 of the Indian Contract Act, 1872 voids post-employment non-competes as agreements in restraint of trade. Please remove this clause, or limit it to confidentiality and non-solicitation.",
+        "replacement_wording": "This Agreement contains no post-employment non-compete restriction. The Employee's obligations are limited to confidentiality of proprietary information and non-solicitation of employees during employment, consistent with Section 27 of the Indian Contract Act, 1872."
+      }
+    },
+    {
+      "rule_id": "IN_EMP_BOND_CLAWBACK",
+      "category": "bond",
+      "title": "Training bond or joining-bonus clawback is disproportionate",
+      "basis_type": "above_local_norm",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "bond_recovery_months",
+        "max_fair_value": 12,
+        "typical_label": "Recovery of actual training cost, pro-rated over 12–24 months"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 74 — Reasonable compensation for breach",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "detection_hint": "Flag employment bonds, training-cost recovery or joining-bonus clawbacks where the recovery is a large multiple of the actual benefit, is not pro-rated over time, or applies without any real training or benefit. Section 74 limits recovery to a reasonable estimate of the loss suffered.",
+      "negotiation_ask": {
+        "short_title": "Pro-rate the bond to actual cost",
+        "polite_ask": "Could the bond amount be tied to the actual training cost and reduce month by month, instead of a fixed lump sum?",
+        "firm_ask": "A fixed clawback unrelated to actual training cost is disproportionate under Section 74. Please pro-rate the recovery to the actual documented cost over the bond period.",
+        "replacement_wording": "Any training-cost recovery or clawback shall be limited to the actual documented cost incurred by the Employer and shall reduce pro-rata on a monthly basis across the agreed bond period."
+      }
+    },
+    {
+      "rule_id": "IN_EMP_NOTICE_PERIOD",
+      "category": "notice",
+      "title": "Asymmetric or excessive notice period",
+      "basis_type": "missing_protection",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "notice_months",
+        "max_fair_value": 3,
+        "typical_label": "30–90 days, symmetric where possible"
+      },
+      "statutory_citation": {
+        "act": "Payment of Wages Act, 1936; applicable State Shops & Establishments Act",
+        "section": "Notice and wage-deduction provisions on termination",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "detection_hint": "Flag offer letters where the notice period is longer than three months, or where resignation notice on the employee is longer than the employer's own termination notice, or where salary in lieu of notice is not stated. Asymmetric notice is a common trap for job-switchers.",
+      "negotiation_ask": {
+        "short_title": "Make notice reasonable and symmetric",
+        "polite_ask": "Could the notice period be 60 days on both sides, with salary in lieu allowed?",
+        "firm_ask": "The current notice period is asymmetric and longer than the standard 30–90 days. Please make it symmetric and confirm that salary in lieu of notice may be paid.",
+        "replacement_wording": "Either party may terminate this Agreement by giving sixty (60) days' written notice. The Employer may release the Employee earlier against payment of salary in lieu of the unserved notice period."
+      }
+    },
+    {
+      "rule_id": "IN_EMP_ESOP_LOCKIN",
+      "category": "esop",
+      "title": "ESOP vesting and lock-in not clearly stated",
+      "basis_type": "missing_protection",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "esop_vesting_disclosure",
+        "typical_label": "Vesting schedule, exercise window and lock-in stated separately"
+      },
+      "statutory_citation": {
+        "act": "SEBI (Share Based Employee Benefits and Sweat Equity) Regulations, 2021",
+        "section": "Vesting, exercise and disclosure requirements for ESOPs",
+        "source_url": "https://www.sebi.gov.in"
+      },
+      "detection_hint": "If the offer references ESOPs or equity, flag it when the vesting schedule, exercise window, exercise price and post-vesting lock-in are not stated in the offer or a clearly linked ESOP policy. Equity that is referenced but undefined is not something the employee can evaluate.",
+      "negotiation_ask": {
+        "short_title": "Get the ESOP terms in writing",
+        "polite_ask": "Could you attach the ESOP policy so I can see the vesting schedule, exercise price and lock-in before I accept?",
+        "firm_ask": "The offer references ESOPs but does not state the vesting schedule, exercise price or lock-in. Please attach the ESOP policy and confirm the grant terms in the offer letter.",
+        "replacement_wording": "The Employee shall be granted options under the Company's ESOP Policy, a copy of which is attached. The offer sets out the grant size, vesting schedule over four years with a one-year cliff, exercise price and any lock-in applying after exercise."
+      }
+    }
+  ],
+  "expected_clauses": [
+    {
+      "id": "confidentiality",
+      "label": "Confidentiality undertaking",
+      "why_it_matters": "Confidentiality is enforceable and is the legitimate way to protect proprietary information instead of a non-compete."
+    },
+    {
+      "id": "termination",
+      "label": "Termination and notice",
+      "why_it_matters": "Unclear termination terms can leave the employee without notice or salary in lieu."
+    },
+    {
+      "id": "esop_policy",
+      "label": "ESOP policy or equity schedule attached",
+      "why_it_matters": "Equity is the headline of most startup offers; without the policy it cannot be valued or planned around."
+    }
+  ]
+}

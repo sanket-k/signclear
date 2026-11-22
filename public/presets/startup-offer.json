@@ -1,0 +1,46 @@
+{
+  "schema_version": "contract_preset_v1",
+  "preset_id": "startup-offer",
+  "label": "Startup Offer",
+  "description": "Offer letter — 2-year non-compete, ₹3L bond, vague ESOPs",
+  "language_default": "en",
+  "expected_pack_id": "in-central-employment",
+  "document": {
+    "doc_type": "employment_offer",
+    "title": "Offer of Employment — Senior Engineer",
+    "page_count": 2,
+    "source_lane": "vector_pdf"
+  },
+  "pages": [
+    {
+      "page": 1,
+      "text": "OFFER OF EMPLOYMENT\n\nDear Ms. Priya Nair, Aadhaar 7712 6654 3321, PAN LMNOP9012Q, phone +91 99887 76655, email priya.nair@example.com (the Employee).\n\n1. Role and Compensation. You are offered the position of Senior Engineer at a fixed salary of Rs. 24,00,000 per annum. You will also be eligible for ESOPs as per the Company policy.\n\n2. Non-Compete. For a period of twenty-four (24) months after leaving the Company, the Employee shall not work with any competitor or in any similar business anywhere in India."
+    },
+    {
+      "page": 2,
+      "text": "3. Training Bond. The Employee shall pay the Company Rs. 3,00,000 as a training bond if the Employee resigns within three years of joining, irrespective of the training actually provided.\n\n4. Notice Period. The Employee shall give ninety (90) days written notice on resignation. The Company may terminate this Agreement with immediate effect on thirty (30) days notice or payment of salary in lieu.\n\n5. ESOPs. Your equity grant will be communicated separately at the discretion of the Board. No vesting schedule, exercise price or lock-in is stated in this Offer."
+    }
+  ],
+  "expected_flags": [
+    { "rule_id": "IN_EMP_NONCOMPETE_VOID", "clause_index": 2, "severity": "critical" },
+    { "rule_id": "IN_EMP_BOND_CLAWBACK", "clause_index": 3, "severity": "caution" },
+    { "rule_id": "IN_EMP_NOTICE_PERIOD", "clause_index": 4, "severity": "caution" },
+    { "rule_id": "IN_EMP_ESOP_LOCKIN", "clause_index": 5, "severity": "caution" }
+  ],
+  "expected_completeness": {
+    "status": "complete",
+    "pages_found": [1, 2],
+    "pages_missing": [],
+    "clause_gaps": []
+  },
+  "expected_pii": {
+    "pii_tokens_found": 5,
+    "pii_token_types": {
+      "aadhaar": 1,
+      "pan": 1,
+      "phone": 1,
+      "email": 1,
+      "party_header": 1
+    }
+  }
+}
