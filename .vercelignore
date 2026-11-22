@@ -1,0 +1,14 @@
+# Nothing here belongs in a deployment artifact or the function bundle.
+# NOTE: rules/ MUST stay deployed — api/_lib/rules.js reads rules/*.json at runtime.
+.worktrees/
+tests/
+docs/
+knowledge-hub/
+todo.md
+AGENTS.md
+DESIGN_SYSTEM.md
+.env.local
+.env
+*.log
+.DS_Store
+coverage/
