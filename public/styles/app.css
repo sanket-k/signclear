@@ -126,6 +126,27 @@ svg {
   white-space: nowrap;
 }
 
+/* §8.3 — skip link: off-screen until keyboard focus, then pinned top-left. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--primary);
+  color: var(--on-primary);
+  border-radius: 0 0 var(--r-md) 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transform: translateY(-150%);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 /* ── 1. Icons (§1.6) ────────────────────────────────────────────────────── */
 
 .icon {
