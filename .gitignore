@@ -10,3 +10,6 @@ coverage/
 
 # parallel lane worktrees (Wave 1)
 .worktrees/
+
+# local tool config (may contain shell history with credentials)
+.commandcode/settings.json
