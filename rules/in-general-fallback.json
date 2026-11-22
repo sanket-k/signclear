@@ -1,0 +1,126 @@
+{
+  "schema_version": "rule_pack_v1",
+  "pack_id": "in-general-fallback",
+  "display_name": "Pan-India General Norms (Fallback)",
+  "jurisdiction": {
+    "country": "IN",
+    "state": null,
+    "cities": []
+  },
+  "contract_types": ["general", "personal_loan", "employment_offer"],
+  "verified_date": "2026-11-21",
+  "legal_basis": "RBI Master Directions (loans), Indian Contract Act 1872 (Sec 27, Sec 74), and general Indian consumer-contract norms. No state-specific rental rules apply in this pack — the UI must show the amber 'Pan-India General Norms Only' badge.",
+  "rules": [
+    {
+      "rule_id": "IN_GENERAL_RBI_KFS",
+      "category": "loan_disclosure",
+      "title": "RBI Key Facts Statement (KFS) Disclosure",
+      "basis_type": "statutory_conflict",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "kfs_present",
+        "typical_label": "KFS must be provided before loan signing"
+      },
+      "statutory_citation": {
+        "act": "RBI Master Direction — Key Facts Statement (KFS) for Loans",
+        "section": "KFS mandatory disclosure",
+        "source_url": "https://www.rbi.org.in"
+      },
+      "detection_hint": "If this is a loan document and no KFS (all-in cost, APR, fees) is attached or referenced, flag it. The KFS is mandatory for regulated lenders before signing.",
+      "negotiation_ask": {
+        "short_title": "Ask for the RBI Key Facts Statement",
+        "polite_ask": "Could you share the RBI Key Facts Statement for this loan so I can see the all-in cost and fees before signing?",
+        "firm_ask": "Under RBI's KFS mandate, a Key Facts Statement must be provided before signing. Please share it before I proceed.",
+        "replacement_wording": "The Lender shall provide the Borrower with the RBI-mandated Key Facts Statement (KFS) disclosing the all-inclusive annualised rate, processing fees, and total cost of credit prior to execution."
+      }
+    },
+    {
+      "rule_id": "IN_GENERAL_NONCOMPETE_VOID",
+      "category": "employment",
+      "title": "Post-Employment Non-Compete is Void in India",
+      "basis_type": "statutory_conflict",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "noncompete_months",
+        "max_fair_value": 0,
+        "typical_label": "0 months post-employment; only in-term restrictions are valid"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 27 — Agreement in restraint of trade",
+        "source_url": "https://indiacode.nic.in"
+      },
+      "detection_hint": "If this is an offer letter or employment contract and it contains a post-employment non-compete restriction (any duration), flag it. Section 27 voids post-employment non-competes. In-term restrictions are generally enforceable.",
+      "negotiation_ask": {
+        "short_title": "Post-employment non-compete is unenforceable",
+        "polite_ask": "I understand confidentiality and in-term restrictions are important, but could we remove the post-employment non-compete? Section 27 of the Indian Contract Act voids it, so it doesn't protect either of us.",
+        "firm_ask": "Section 27 of the Indian Contract Act, 1872 voids post-employment non-competes as agreements in restraint of trade. Please remove Clause {clause_ref}, or limit it to confidentiality and in-term restrictions.",
+        "replacement_wording": "This Agreement contains no post-employment non-compete restriction. The Employee's obligations are limited to confidentiality of proprietary information and non-solicitation of employees during employment, consistent with Section 27 of the Indian Contract Act, 1872."
+      }
+    },
+    {
+      "rule_id": "IN_GENERAL_DEPOSIT_REFUND_TIMELINE",
+      "category": "deposit_refund",
+      "title": "Specific Deposit Refund Timeline",
+      "basis_type": "missing_protection",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "days_to_refund",
+        "max_fair_value": 30,
+        "typical_label": "15–30 days after handover, with itemised deductions"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872; Consumer Protection Act, 2019",
+        "section": "Unfair trade practice — open-ended deposit retention",
+        "source_url": "https://indiacode.nic.in"
+      },
+      "detection_hint": "Flag if the agreement does not specify a refund deadline for any security deposit, or says the deposit will be refunded 'after deductions' without a time limit.",
+      "negotiation_ask": {
+        "short_title": "Add a 15–30 day refund deadline",
+        "polite_ask": "Could we add a line that the deposit will be refunded within 15 days of handover, with any deductions listed in writing?",
+        "firm_ask": "Clause {clause_ref} leaves the deposit refund open-ended. Please add a 15-day deadline after handover with an itemised deduction statement.",
+        "replacement_wording": "Any refundable deposit shall be returned, after lawful and itemised deductions (if any), within fifteen (15) days of the counterparty handing over possession or completing the relevant handover obligations."
+      }
+    },
+    {
+      "rule_id": "IN_GENERAL_ONE_SIDED_PENALTY",
+      "category": "penalty",
+      "title": "One-Sided Penalty Without Counterpart",
+      "basis_type": "above_local_norm",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "penalty_symmetry",
+        "typical_label": "Penalties must apply symmetrically or be justified"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 74 — Reasonable compensation for breach",
+        "source_url": "https://indiacode.nic.in"
+      },
+      "detection_hint": "Flag clauses that impose a penalty on one party only (e.g. only the tenant, only the employee), with no equivalent obligation on the other party, especially where the penalty is disproportionate to any likely loss.",
+      "negotiation_ask": {
+        "short_title": "Make the penalty clause symmetric",
+        "polite_ask": "Could we make this penalty symmetric — the same rule applies to both sides — so it reads as a fair protection rather than a one-sided one?",
+        "firm_ask": "Section 74 of the Indian Contract Act limits penalties to reasonable compensation. Clause {clause_ref} is one-sided and disproportionate. Please make it symmetric or reduce it to a reasonable estimate of actual loss.",
+        "replacement_wording": "Any penalty under this Agreement shall apply symmetrically to both parties, and shall be limited to a reasonable estimate of the loss likely to result from the relevant breach, consistent with Section 74 of the Indian Contract Act, 1872."
+      }
+    }
+  ],
+  "expected_clauses": [
+    {
+      "id": "deposit_refund_days",
+      "label": "Specific deposit refund timeline",
+      "why_it_matters": "Open-ended refund language delays refunds after handover."
+    },
+    {
+      "id": "notice_period",
+      "label": "Symmetric notice period",
+      "why_it_matters": "One-sided notice lets the stronger party exit without giving the weaker party time to plan."
+    },
+    {
+      "id": "dispute_resolution",
+      "label": "Dispute resolution and jurisdiction",
+      "why_it_matters": "Without a specified forum, disputes default to the drafting party's home court, which may be far away."
+    }
+  ]
+}

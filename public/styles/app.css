@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  padding-bottom: calc(var(--sticky-bar-h) + var(--safari-safe-bottom) + var(--sp-4));
+  -webkit-text-size-adjust: 100%;
+}
+
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-4);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 900px) {
+  body {
+    padding-bottom: 0;
+  }
+}

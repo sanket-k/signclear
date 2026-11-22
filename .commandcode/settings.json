@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(mkdir:*)",
+      "Shell(touch:*)",
+      "Shell(node -e for (const f of ['public/mock-audit.json','public/manifest.webmanifest','vercel.json','rules/schema.json','rules/in-general-fallback.json']) { JSON.parse(require('fs').readFileSync(f,'utf8')); console.log('ok', f) })",
+      "Shell(node --test tests/guardrails.test.mjs)",
+      "Shell(node --check api/audit.js)",
+      "Shell(node --check public/js/main.js 2 >& 1)",
+      "Shell(node -e \" const m=require('./public/mock-audit.json'); const assert=require('assert'); assert.equal(m.summary_bullets.length,3,'3 bullets'); assert.equal(m.exposure.current,m.exposure.breakdown.reduce((s,b)=>s+b.amount,0),'exposure sums'); assert.equal(m.exposure.saved,m.exposure.current-m.exposure.negotiated,'saved math'); const ids=new Set(m.findings.map(f=>f.finding_id)); for(const c of m.clauses) for(const id of c.finding_ids) assert(ids.has(id),'clause->finding '+id); const cids=new Set(m.clauses.map(c=>c.clause_id)); for(const f of m.findings) assert(cids.has(f.clause_id),'finding->clause'); for(const f of m.findings) assert(f.rule_id && f.negotiation_ask.replacement_wording,'rule+ask'); for(const s of m.spoken_script) assert(cids.has(s.clause_id),'script clause'); assert.equal(m.findings.some(f=>f.severity==='critical'),true); assert.equal(m.findings.some(f=>f.severity==='caution'),true); assert.equal(m.findings.some(f=>f.severity==='standard'),true); console.log('mock invariants ok —', m.clauses.length,'clauses,',m.findings.length,'findings,',m.spoken_script.length,'segments'); \")",
+      "Shell(python3 -m http.server 4173 --directory public)",
+      "Shell(curl -s -o /dev/null -w index %{http_code}\\n http://localhost:4173/)",
+      "Shell(curl -s -o /dev/null -w tokens %{http_code}\\n http://localhost:4173/styles/tokens.css)",
+      "Shell(curl -s -o /dev/null -w app.css %{http_code}\\n http://localhost:4173/styles/app.css)",
+      "Shell(curl -s -o /dev/null -w main.js %{http_code}\\n http://localhost:4173/js/main.js)",
+      "Shell(curl -s -o /dev/null -w manifest %{http_code}\\n http://localhost:4173/manifest.webmanifest)",
+      "Shell(curl -s http://localhost:4173/mock-audit.json)",
+      "Shell(node -e let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log('mock served —',JSON.parse(d).schema_version)))"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

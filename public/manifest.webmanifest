@@ -1,0 +1,12 @@
+{
+  "name": "SignClear — Understand Before You Sign",
+  "short_name": "SignClear",
+  "description": "Turn a photo or PDF of an Indian agreement into a 60-second spoken walkthrough in your language.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#1D4ED8",
+  "lang": "en-IN"
+}
