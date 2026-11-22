@@ -1,0 +1,308 @@
+{
+  "schema_version": "audit_result_v1",
+  "audit_id": "fixture-startup-offer-001",
+  "created_at": "2026-11-22T10:00:00Z",
+  "language": "kn",
+  "pack": {
+    "schema_version": "rule_pack_v1",
+    "pack_id": "in-central-employment",
+    "display_name": "India Central Employment & Offer-Letter Norms",
+    "jurisdiction": { "country": "IN", "state": null, "cities": [] },
+    "verified_date": "2026-11-21",
+    "fallback_used": false,
+    "badge": null
+  },
+  "document": {
+    "doc_type": "employment_offer",
+    "title": "Offer of Employment — Senior Engineer",
+    "source_lane": "vector_pdf",
+    "page_count": 2,
+    "privacy": {
+      "lane": "A",
+      "pii_tokens_found": 5,
+      "pii_token_types": {
+        "aadhaar": 1,
+        "pan": 1,
+        "phone": 1,
+        "email": 1,
+        "party_header": 1
+      },
+      "exif_stripped": true,
+      "zero_retention": false
+    }
+  },
+  "score": {
+    "value": 41,
+    "band": "risky",
+    "label": "One unenforceable clause and three one-sided terms"
+  },
+  "exposure": {
+    "currency": "INR",
+    "current": 900000,
+    "negotiated": 400000,
+    "saved": 500000,
+    "breakdown": [
+      { "label": "Training bond recovery (Clause 3)", "amount": 300000 },
+      { "label": "Notice-period salary at risk — 90 days at 2,00,000 per month (Clause 4)", "amount": 600000 }
+    ]
+  },
+  "way_out": {
+    "months": 36,
+    "points": [
+      { "exit_month": 1, "current_loss": 900000, "negotiated_loss": 400000 },
+      { "exit_month": 18, "current_loss": 462857, "negotiated_loss": 205714 },
+      { "exit_month": 36, "current_loss": 0, "negotiated_loss": 0 }
+    ]
+  },
+  "summary_bullets": [
+    "Statutory Conflict: the twenty-four month post-employment non-compete is unenforceable under Section 27.",
+    "Above Local Norm: the 3,00,000 rupee bond is not pro-rated to real training cost.",
+    "Missing Protection: asymmetric ninety-day notice, and ESOP vesting terms are left unstated."
+  ],
+  "findings": [
+    {
+      "finding_id": "F1",
+      "rule_id": "IN_EMP_NONCOMPETE_VOID",
+      "category": "restraint_of_trade",
+      "title": "Post-Employment Non-Compete is Void in India",
+      "basis_type": "statutory_conflict",
+      "severity": "critical",
+      "benchmark": {
+        "metric": "noncompete_months",
+        "max_fair_value": 0,
+        "typical_label": "0 months post-employment; only in-term restrictions are valid"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 27 — Agreement in restraint of trade",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "clause_id": "c2",
+      "quote": "For a period of twenty-four (24) months after leaving the Company, the Employee shall not work with any competitor or in any similar business anywhere in India.",
+      "quote_verified": true,
+      "jaccard": 1,
+      "explanation": "Clause 2 bars you from any competing job in India for twenty-four months after you leave. Section 27 of the Indian Contract Act makes that restraint unenforceable, so it protects nobody and only scares you. Confidentiality and non-solicitation during employment are the valid alternative.",
+      "negotiation_ask": {
+        "short_title": "Post-employment non-compete is unenforceable",
+        "polite_ask": "I understand confidentiality and in-term restrictions are important, but could we remove the post-employment non-compete? Section 27 of the Indian Contract Act voids it, so it doesn't protect either of us.",
+        "firm_ask": "Section 27 of the Indian Contract Act, 1872 voids post-employment non-competes as agreements in restraint of trade. Please remove this clause, or limit it to confidentiality and non-solicitation.",
+        "replacement_wording": "This Agreement contains no post-employment non-compete restriction. The Employee's obligations are limited to confidentiality of proprietary information and non-solicitation of employees during employment, consistent with Section 27 of the Indian Contract Act, 1872."
+      }
+    },
+    {
+      "finding_id": "F2",
+      "rule_id": "IN_EMP_BOND_CLAWBACK",
+      "category": "bond",
+      "title": "Training bond or joining-bonus clawback is disproportionate",
+      "basis_type": "above_local_norm",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "bond_recovery_months",
+        "max_fair_value": 12,
+        "typical_label": "Recovery of actual training cost, pro-rated over 12–24 months"
+      },
+      "statutory_citation": {
+        "act": "Indian Contract Act, 1872",
+        "section": "Section 74 — Reasonable compensation for breach",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "clause_id": "c3",
+      "quote": "The Employee shall pay the Company Rs. 3,00,000 as a training bond if the Employee resigns within three years of joining, irrespective of the training actually provided.",
+      "quote_verified": true,
+      "jaccard": 1,
+      "explanation": "Clause 3 asks for Rs. 3,00,000 flat if you resign within three years, and it says so even when no training was actually given. The usual norm is recovery of the real documented training cost, reducing month by month over twelve to twenty-four months. Section 74 keeps recovery to a reasonable estimate of loss.",
+      "negotiation_ask": {
+        "short_title": "Pro-rate the bond to actual cost",
+        "polite_ask": "Could the bond amount be tied to the actual training cost and reduce month by month, instead of a fixed lump sum?",
+        "firm_ask": "A fixed clawback unrelated to actual training cost is disproportionate under Section 74. Please pro-rate the recovery to the actual documented cost over the bond period.",
+        "replacement_wording": "Any training-cost recovery or clawback shall be limited to the actual documented cost incurred by the Employer and shall reduce pro-rata on a monthly basis across the agreed bond period."
+      }
+    },
+    {
+      "finding_id": "F3",
+      "rule_id": "IN_EMP_NOTICE_PERIOD",
+      "category": "notice",
+      "title": "Asymmetric or excessive notice period",
+      "basis_type": "missing_protection",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "notice_months",
+        "max_fair_value": 3,
+        "typical_label": "30–90 days, symmetric where possible"
+      },
+      "statutory_citation": {
+        "act": "Payment of Wages Act, 1936; applicable State Shops & Establishments Act",
+        "section": "Notice and wage-deduction provisions on termination",
+        "source_url": "https://www.indiacode.nic.in"
+      },
+      "clause_id": "c4",
+      "quote": "The Employee shall give ninety (90) days written notice on resignation. The Company may terminate this Agreement with immediate effect on thirty (30) days notice or payment of salary in lieu.",
+      "quote_verified": true,
+      "jaccard": 1,
+      "explanation": "Clause 4 is lopsided. You owe ninety days of notice, but the company owes only thirty days, and it may terminate with immediate effect against salary in lieu. Standard practice is thirty to ninety days on both sides. Ask for sixty days, symmetric, with salary in lieu allowed for either party.",
+      "negotiation_ask": {
+        "short_title": "Make notice reasonable and symmetric",
+        "polite_ask": "Could the notice period be 60 days on both sides, with salary in lieu allowed?",
+        "firm_ask": "The current notice period is asymmetric and longer than the standard 30–90 days. Please make it symmetric and confirm that salary in lieu of notice may be paid.",
+        "replacement_wording": "Either party may terminate this Agreement by giving sixty (60) days' written notice. The Employer may release the Employee earlier against payment of salary in lieu of the unserved notice period."
+      }
+    },
+    {
+      "finding_id": "F4",
+      "rule_id": "IN_EMP_ESOP_LOCKIN",
+      "category": "esop",
+      "title": "ESOP vesting and lock-in not clearly stated",
+      "basis_type": "missing_protection",
+      "severity": "caution",
+      "benchmark": {
+        "metric": "esop_vesting_disclosure",
+        "typical_label": "Vesting schedule, exercise window and lock-in stated separately"
+      },
+      "statutory_citation": {
+        "act": "SEBI (Share Based Employee Benefits and Sweat Equity) Regulations, 2021",
+        "section": "Vesting, exercise and disclosure requirements for ESOPs",
+        "source_url": "https://www.sebi.gov.in"
+      },
+      "clause_id": "c5",
+      "quote": "Your equity grant will be communicated separately at the discretion of the Board. No vesting schedule, exercise price or lock-in is stated in this Offer.",
+      "quote_verified": true,
+      "jaccard": 1,
+      "explanation": "Clause 5 mentions ESOPs but leaves the grant size, vesting schedule, exercise price and lock-in entirely to the Board later. Equity you cannot value is not part of your compensation yet. Ask for the ESOP policy to be attached and the grant terms confirmed in the offer.",
+      "negotiation_ask": {
+        "short_title": "Get the ESOP terms in writing",
+        "polite_ask": "Could you attach the ESOP policy so I can see the vesting schedule, exercise price and lock-in before I accept?",
+        "firm_ask": "The offer references ESOPs but does not state the vesting schedule, exercise price or lock-in. Please attach the ESOP policy and confirm the grant terms in the offer letter.",
+        "replacement_wording": "The Employee shall be granted options under the Company's ESOP Policy, a copy of which is attached. The offer sets out the grant size, vesting schedule over four years with a one-year cliff, exercise price and any lock-in applying after exercise."
+      }
+    }
+  ],
+  "clauses": [
+    {
+      "clause_id": "c1",
+      "index": 1,
+      "heading": "Role and Compensation",
+      "text": "You are offered the position of Senior Engineer at a fixed salary of Rs. 24,00,000 per annum. You will also be eligible for ESOPs as per the Company policy.",
+      "page": 1,
+      "status": "ok",
+      "finding_ids": [],
+      "ocr_tokens": []
+    },
+    {
+      "clause_id": "c2",
+      "index": 2,
+      "heading": "Non-Compete",
+      "text": "For a period of twenty-four (24) months after leaving the Company, the Employee shall not work with any competitor or in any similar business anywhere in India.",
+      "page": 1,
+      "status": "ok",
+      "finding_ids": ["F1"],
+      "ocr_tokens": []
+    },
+    {
+      "clause_id": "c3",
+      "index": 3,
+      "heading": "Training Bond",
+      "text": "The Employee shall pay the Company Rs. 3,00,000 as a training bond if the Employee resigns within three years of joining, irrespective of the training actually provided.",
+      "page": 2,
+      "status": "ok",
+      "finding_ids": ["F2"],
+      "ocr_tokens": []
+    },
+    {
+      "clause_id": "c4",
+      "index": 4,
+      "heading": "Notice Period",
+      "text": "The Employee shall give ninety (90) days written notice on resignation. The Company may terminate this Agreement with immediate effect on thirty (30) days notice or payment of salary in lieu.",
+      "page": 2,
+      "status": "ok",
+      "finding_ids": ["F3"],
+      "ocr_tokens": []
+    },
+    {
+      "clause_id": "c5",
+      "index": 5,
+      "heading": "ESOPs",
+      "text": "Your equity grant will be communicated separately at the discretion of the Board. No vesting schedule, exercise price or lock-in is stated in this Offer.",
+      "page": 2,
+      "status": "ok",
+      "finding_ids": ["F4"],
+      "ocr_tokens": []
+    }
+  ],
+  "expected_clauses": [
+    {
+      "id": "confidentiality",
+      "label": "Confidentiality undertaking",
+      "why_it_matters": "Confidentiality is enforceable and is the legitimate way to protect proprietary information instead of a non-compete.",
+      "present": false,
+      "clause_id": null
+    },
+    {
+      "id": "termination",
+      "label": "Termination and notice",
+      "why_it_matters": "Unclear termination terms can leave the employee without notice or salary in lieu.",
+      "present": true,
+      "clause_id": "c4"
+    },
+    {
+      "id": "esop_policy",
+      "label": "ESOP policy or equity schedule attached",
+      "why_it_matters": "Equity is the headline of most startup offers; without the policy it cannot be valued or planned around.",
+      "present": false,
+      "clause_id": null
+    }
+  ],
+  "spoken_script": [
+    {
+      "seq": 1,
+      "clause_id": "c2",
+      "language": "kn",
+      "text": "ಕೆಲಸ ಬಿಟ್ಟ ಮೇಲೆ ಇಪ್ಪತ್ತನಾಲ್ಕು ತಿಂಗಳ ಸ್ಪರ್ಧೆ ನಿಬಂಧನೆ ಭಾರತದಲ್ಲಿ ಜಾರಿಯಾಗುವುದಿಲ್ಲ, ಅದನ್ನು ತೆಗೆಯಲು ಕೇಳಿ.",
+      "text_en": "The twenty-four month non-compete after leaving is unenforceable under Section twenty-seven in India.",
+      "audio_url": null
+    },
+    {
+      "seq": 2,
+      "clause_id": "c3",
+      "language": "kn",
+      "text": "ನಿಮ್ಮ ಮೂರು ಲಕ್ಷ ತರಬೇತಿ ಬಾಂಡ್ ನಿಜವಾದ ತರಬೇತಿ ಇಲ್ಲದಿದ್ದರೂ ಅನ್ವಯಿಸುತ್ತದೆ, ತಿಂಗಳಿಗೆ ಕಡಿಮೆಯಾಗುವಂತೆ ಕೇಳಿ.",
+      "text_en": "The three lakh training bond applies even with no training, so ask for pro-rated recovery.",
+      "audio_url": null
+    },
+    {
+      "seq": 3,
+      "clause_id": "c4",
+      "language": "kn",
+      "text": "ನೀವು ತೊಂಬತ್ತು ದಿನ ಮುಂಚಿತ notice ಕೊಡಬೇಕು, ಕಂಪನಿ ಮೂವತ್ತು ದಿನದಲ್ಲಿ ಸಂಬಳ ಕೊಟ್ಟು ಬಿಡಬಹುದು.",
+      "text_en": "You must give ninety days notice while the company may exit in thirty days with pay.",
+      "audio_url": null
+    },
+    {
+      "seq": 4,
+      "clause_id": "c5",
+      "language": "kn",
+      "text": "ಈ ಆಫರ್‌ನಲ್ಲಿ ESOP vesting, exercise price ಮತ್ತು lock-in ಏನೂ ಹೇಳಿಲ್ಲ, ಲಿಖಿತ ನೀತಿ ಕೇಳಿ.",
+      "text_en": "ESOP vesting, exercise price and lock-in are not stated, so ask for the policy in writing.",
+      "audio_url": null
+    }
+  ],
+  "completeness": {
+    "status": "complete",
+    "pages_found": [1, 2],
+    "pages_missing": [],
+    "clause_gaps": [],
+    "illegible_segments": [],
+    "banner": null
+  },
+  "ocr": {
+    "engine": "none",
+    "ocr_digit_tokens": [],
+    "illegible_count": 0
+  },
+  "meta": {
+    "llm_provider": "fixture",
+    "model": "fixture",
+    "prompt_ids": ["contract.audit@1"],
+    "template_hash": "cyrb53:fixture01",
+    "duration_ms": 0
+  }
+}
