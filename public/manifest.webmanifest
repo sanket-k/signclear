@@ -8,5 +8,6 @@
   "orientation": "portrait",
   "background_color": "#FFFFFF",
   "theme_color": "#1D4ED8",
-  "lang": "en-IN"
+  "lang": "en-IN",
+  "icons": [{ "src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
