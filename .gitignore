@@ -7,3 +7,6 @@ coverage/
 *.log
 .DS_Store
 *.local
+
+# parallel lane worktrees (Wave 1)
+.worktrees/
